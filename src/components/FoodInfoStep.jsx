@@ -62,67 +62,81 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
           <p className="banner-caption">* 사진 선택시 구장 정보 및 실시간 안내사항 확인 가능 - 구단 홈페이지로 이동</p>
         </div>
 
-        {/* Nearby Restaurants (New Large Card Design) */}
-        <h3 className="section-title-simple" style={{ fontSize: '18px', marginTop: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          🥄 구장 내 맛집
-          <span style={{ marginLeft: 'auto' }} className="hot-zone-badge">HOT PLACE</span>
-        </h3>
+        {/* Nearby Restaurants (Premium Swipe Layout) */}
+        <div className="section-header space-between" style={{ marginTop: '30px' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            🥄 구장 내 핫플레이스
+          </h3>
+          <div className="more-link-blue" style={{ margin: 0 }} onClick={() => onNavigate(10, { mode: 'inside' })}>전체보기</div>
+        </div>
         
-        <div className="food-large-card highlighted" onClick={() => onNavigate(10, { mode: 'inside' })}>
-          <div className="food-img-large">
-            <div className="star-badge">⭐ 4.8</div>
-          </div>
-          <div className="food-card-bottom">
-            <div className="food-title-row">
-              <h4>OO 떡볶이</h4>
-              <span className="food-price">₩6,500</span>
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '20px', scrollbarWidth: 'none', margin: '0 -16px', padding: '0 16px 20px' }}>
+          <div className="food-premium-card" onClick={() => onNavigate(10, { mode: 'inside' })}>
+            <div className="food-premium-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60)' }}>
+              <div className="food-premium-badge hot">웨이팅 주의🔥</div>
             </div>
-            <ul>
-              <li>잠실 대표! 김치말이 국수</li>
-              <li>특제 자가제면으로 든든한 한끼</li>
-            </ul>
+            <div className="food-premium-content">
+              <h4 className="food-premium-title">잠실 명물 김치말이국수</h4>
+              <p className="food-premium-desc">특제 자가제면으로 든든한 한끼! 더운 여름 직관 필수 코스</p>
+              <div className="food-premium-footer">
+                <span className="food-premium-price">₩6,500</span>
+                <span className="food-premium-meta">⭐ 4.8 (1.2k+)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="food-premium-card" onClick={() => onNavigate(10, { mode: 'inside' })}>
+            <div className="food-premium-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60)' }}>
+              <div className="food-premium-badge">맥주 찰떡🍺</div>
+            </div>
+            <div className="food-premium-content">
+              <h4 className="food-premium-title">바삭 순살 치킨세트</h4>
+              <p className="food-premium-desc">답답한 경기력을 시원하고 바삭하게 날려버릴 치맥세트</p>
+              <div className="food-premium-footer">
+                <span className="food-premium-price">₩22,500</span>
+                <span className="food-premium-meta">⭐ 4.9 (850+)</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="food-large-card" onClick={() => onNavigate(10, { mode: 'inside' })}>
-          <div className="food-img-large">
-            <div className="star-badge">⭐ 4.9</div>
-          </div>
-          <div className="food-card-bottom">
-            <div className="food-title-row">
-              <h4>OO 치킨</h4>
-              <span className="food-price">₩22,500</span>
-            </div>
-            <ul>
-              <li>생맥주 맛집</li>
-              <li>답답한 경기력을 시원하고 바삭하게 날려버릴 치킨세트</li>
-            </ul>
-          </div>
+        {/* Outside Restaurants (Premium Swipe Layout) */}
+        <div className="section-header space-between" style={{ marginTop: '16px' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            🍻 구장 근처 픽업 추천
+          </h3>
+          <div className="more-link-blue" style={{ margin: 0 }} onClick={() => onNavigate(10, { mode: 'outside' })}>전체보기</div>
         </div>
         
-        <div className="more-link-blue" onClick={() => onNavigate(10, { mode: 'inside' })}>더보기</div>
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '24px', scrollbarWidth: 'none', margin: '0 -16px', padding: '0 16px 24px' }}>
+          <div className="food-premium-card" onClick={() => onNavigate(10, { mode: 'outside' })}>
+            <div className="food-premium-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60)' }}>
+              <div className="food-premium-badge hot">포장할인 3,000원</div>
+            </div>
+            <div className="food-premium-content">
+              <h4 className="food-premium-title">xx 수제 피자</h4>
+              <p className="food-premium-desc">야구장 도보 3분! 330mm 초대형 피자로 배부른 직관</p>
+              <div className="food-premium-footer">
+                <span className="food-premium-price">₩24,900</span>
+                <span className="food-premium-meta">⭐ 4.7 (500+)</span>
+              </div>
+            </div>
+          </div>
 
-        {/* Outside Restaurants (For completion, using similar design) */}
-        <h3 className="section-title-simple" style={{ fontSize: '18px', marginTop: '30px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          🍻 구장 근처 맛집
-        </h3>
-        
-        <div className="food-large-card" onClick={() => onNavigate(10, { mode: 'outside' })}>
-          <div className="food-img-large">
-            <div className="star-badge">⭐ 4.7</div>
-          </div>
-          <div className="food-card-bottom">
-            <div className="food-title-row">
-              <h4>xx 치킨</h4>
-              <span className="food-price">₩24,900</span>
+          <div className="food-premium-card" onClick={() => onNavigate(10, { mode: 'outside' })}>
+            <div className="food-premium-img" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60)' }}>
+              <div className="food-premium-badge">1인 추천👍</div>
             </div>
-            <ul>
-              <li>330mm * 도보 3분</li>
-              <li>포장 주문시 3000원 할인</li>
-            </ul>
+            <div className="food-premium-content">
+              <h4 className="food-premium-title">육즙 가득 수제버거</h4>
+              <p className="food-premium-desc">혼직관에 딱 맞는 깔끔한 포장, 감자튀김 무료 사이즈업</p>
+              <div className="food-premium-footer">
+                <span className="food-premium-price">₩12,000</span>
+                <span className="food-premium-meta">⭐ 4.6 (320+)</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="more-link-blue" onClick={() => onNavigate(10, { mode: 'outside' })}>더보기</div>
 
         {/* Food Course Schedule */}
         <div className="section-header space-between" style={{ marginTop: '30px' }}>
@@ -165,17 +179,17 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active">
+        <div className="nav-item active" onClick={() => onNavigate(5)}>
           <Home size={24} />
           <span>HOME</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item" onClick={() => onNavigate(14)}>
           <MapPin size={24} />
           <span>MY COURSES</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item" onClick={() => onNavigate(12)}>
           <Mail size={24} />
-          <span>COMMUNITY</span>
+          <span>MESSAGE</span>
         </div>
       </div>
     </div>

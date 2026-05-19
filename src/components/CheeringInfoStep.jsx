@@ -188,17 +188,17 @@ export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active">
+        <div className="nav-item active" onClick={() => onNavigate(5)}>
           <Home size={24} />
           <span>HOME</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item" onClick={() => onNavigate(14)}>
           <MapPin size={24} />
           <span>MY COURSES</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item" onClick={() => onNavigate(12)}>
           <Mail size={24} />
-          <span>COMMUNITY</span>
+          <span>MESSAGE</span>
         </div>
       </div>
     </div>

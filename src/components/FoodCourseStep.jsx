@@ -1,8 +1,27 @@
-import React from 'react';
-import { ArrowLeft, Home, MapPin, Mail, Share2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Home, MapPin, Mail, Share2, X, Check } from 'lucide-react';
 import KakaoMap from './KakaoMap';
 
-export default function FoodCourseStep({ onBack }) {
+const FRIENDS_LIST = [
+  { id: 1, name: '김지원', handle: '@jiwon.-.' },
+  { id: 2, name: '황성빈', handle: '@lottehw' },
+  { id: 3, name: '제발 가을야구', handle: '@lotte__please_v3' },
+  { id: 4, name: '오정훈', handle: '@oh~' }
+];
+
+export default function FoodCourseStep({ onBack, onNavigate }) {
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState(null);
+
+  const handleShare = () => {
+    if (selectedFriend) {
+      alert(`${selectedFriend.name}님에게 링크가 공유되었습니다.`);
+      setShowShareModal(false);
+      onNavigate(13); // ChatRoomStep으로 이동
+    } else {
+      alert('공유할 친구를 선택해주세요.');
+    }
+  };
   return (
     <div className="main-layout">
       {/* Top Bar */}
@@ -11,7 +30,7 @@ export default function FoodCourseStep({ onBack }) {
         <h2 className="top-bar-title">맛집 코스 추천 일정</h2>
         <Share2 
           className="share-icon" 
-          onClick={() => alert('메시지 창으로 공유되었습니다.')} 
+          onClick={() => setShowShareModal(true)} 
           style={{ cursor: 'pointer', position: 'absolute', right: '16px', color: '#333' }} 
         />
       </div>
@@ -132,19 +151,59 @@ export default function FoodCourseStep({ onBack }) {
 
       </div>
 
+      {/* Share Modal */}
+      {showShareModal && (
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
+          <div style={{ backgroundColor: 'white', width: '100%', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '24px', paddingBottom: '40px', position: 'relative' }}>
+            <X 
+              size={24} 
+              color="#888" 
+              style={{ position: 'absolute', top: '24px', right: '24px', cursor: 'pointer' }} 
+              onClick={() => setShowShareModal(false)} 
+            />
+            <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px' }}>채팅방으로 공유하기</h3>
+            
+            <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '24px' }}>
+              {FRIENDS_LIST.map(friend => (
+                <div 
+                  key={friend.id} 
+                  onClick={() => setSelectedFriend(friend)}
+                  style={{ display: 'flex', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }}
+                >
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#E0E0E0', marginRight: '16px' }}></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{friend.name}</div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>{friend.handle}</div>
+                  </div>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: selectedFriend?.id === friend.id ? 'none' : '1px solid #ccc', backgroundColor: selectedFriend?.id === friend.id ? '#6C43EB' : 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    {selectedFriend?.id === friend.id && <Check size={16} color="white" />}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button 
+              onClick={handleShare}
+              style={{ width: '100%', padding: '16px', backgroundColor: selectedFriend ? '#6C43EB' : '#ccc', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 'bold', cursor: selectedFriend ? 'pointer' : 'not-allowed' }}>
+              공유하기
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Bottom Navigation */}
       <div className="bottom-nav">
         <div className="nav-item active">
           <Home size={24} />
           <span>HOME</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item" onClick={() => onNavigate(14)}>
           <MapPin size={24} />
           <span>MY COURSES</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item" onClick={() => onNavigate(12)}>
           <Mail size={24} />
-          <span>COMMUNITY</span>
+          <span>MESSAGE</span>
         </div>
       </div>
     </div>

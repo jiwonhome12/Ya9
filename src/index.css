@@ -942,6 +942,85 @@ body {
 .food-large-card.highlighted {
   border: 2px solid #4B00FF;
 }
+
+/* Premium Horizontal Swipe Card */
+.food-premium-card {
+  min-width: 260px;
+  width: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  border: 1px solid #eee;
+}
+.food-premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(108, 67, 235, 0.15);
+  border-color: #6C43EB;
+}
+.food-premium-img {
+  width: 100%;
+  height: 140px;
+  background-color: #eee;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
+.food-premium-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background-color: #111;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.food-premium-badge.hot {
+  background-color: #E53935;
+}
+.food-premium-content {
+  padding: 16px;
+}
+.food-premium-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: #111;
+}
+.food-premium-desc {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.food-premium-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed #eee;
+  padding-top: 12px;
+}
+.food-premium-price {
+  color: #6C43EB;
+  font-weight: 800;
+  font-size: 15px;
+}
+.food-premium-meta {
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 .food-img-large {
   width: 100%;
   height: 120px;
