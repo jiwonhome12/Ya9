@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { User } from 'lucide-react';
+import { mockDbService } from '../services/mockDb';
 
 export default function ProfileStep({ onNext }) {
   const [name, setName] = useState('');
@@ -9,7 +10,12 @@ export default function ProfileStep({ onNext }) {
 
   const handleImgChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setProfileImg(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImg(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -17,6 +23,16 @@ export default function ProfileStep({ onNext }) {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+  };
+
+  const handleNext = () => {
+    // Save profile to database layer
+    mockDbService.saveUserProfile({
+      name: name.trim() || 'ji_won.-.f',
+      bio: description.trim() || '제발 가을 야구좀 가자 😭',
+      avatar: profileImg || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150'
+    });
+    onNext();
   };
 
   return (
@@ -66,10 +82,11 @@ export default function ProfileStep({ onNext }) {
           ></textarea>
         </div>
         
-        <button className="primary-btn" onClick={onNext}>
+        <button className="primary-btn" onClick={handleNext}>
           next step
         </button>
       </div>
     </>
   );
 }
+

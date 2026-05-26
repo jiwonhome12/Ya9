@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Home, MapPin, Mail, Plus, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Home, MapPin, User, Plus, ChevronRight } from 'lucide-react';
 
 const TEAM_BANNERS = {
   kiwoom: { img: 'kiwoomheroes.png', url: 'https://www.heroesbaseball.co.kr/' },
@@ -32,9 +32,20 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
   return (
     <div className="main-layout">
       {/* Top Bar */}
-      <div className="top-bar">
+      <div className="top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <ArrowLeft className="back-icon" onClick={onBack} />
-        <h2 className="top-bar-title">먹방형 추천 정보</h2>
+        <h2 className="top-bar-title" style={{ margin: 0, flex: 1, textAlign: 'center' }}>먹방형 추천 정보</h2>
+        {myTeam ? (
+          <div 
+            className={`my-team-badge ${myTeam}`} 
+            onClick={() => onNavigate(3)}
+            style={{ cursor: 'pointer' }}
+          >
+            {myTeam.toUpperCase()}
+          </div>
+        ) : (
+          <div style={{ width: 24 }}></div>
+        )}
       </div>
 
       <div className="main-content scrollable">
@@ -141,7 +152,7 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
         {/* Food Course Schedule */}
         <div className="section-header space-between" style={{ marginTop: '30px' }}>
           <h3>맛집 코스 추천 일정</h3>
-          <button className="create-btn"><Plus size={14} /> 작성하기</button>
+          <button className="create-btn" disabled style={{ opacity: 0.6, cursor: 'not-allowed', pointerEvents: 'none' }}><Plus size={14} /> 작성하기</button>
         </div>
         
         <div className="course-card highlight-border" onClick={() => onNavigate(11)} style={{ cursor: 'pointer' }}>
@@ -179,17 +190,17 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active" onClick={() => onNavigate(5)}>
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(14)}>
+        <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(12)}>
-          <Mail size={24} />
-          <span>MESSAGE</span>
+        <div className="nav-item" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>

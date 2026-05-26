@@ -1,5 +1,6 @@
-import React from 'react';
-import { ArrowLeft, Home, MapPin, Mail, Play, ShoppingCart, ChevronRight, Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Home, MapPin, User, Play, ShoppingCart, ChevronRight, Plus, X } from 'lucide-react';
+import { mockDbService } from '../services/mockDb';
 
 const TEAM_BANNERS = {
   kiwoom: { img: 'kiwoomheroes.png', url: 'https://www.heroesbaseball.co.kr/' },
@@ -42,12 +43,41 @@ const SHOP_URLS = {
 export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }) {
   const homeTeams = stadium ? STADIUM_TO_TEAM[stadium.id] : ['lg', 'doosan'];
 
+  const [blogsList, setBlogsList] = useState(() => mockDbService.getBlogs().filter(b => b.mode === 'cheering'));
+  const [showWriteModal, setShowWriteModal] = useState(false);
+  const [writeTitle, setWriteTitle] = useState('');
+  const [writeDesc, setWriteDesc] = useState('');
+
+  const handleWriteSubmit = (e) => {
+    e.preventDefault();
+    if (writeTitle && writeDesc) {
+      const profile = mockDbService.getUserProfile();
+      mockDbService.addBlogEntry('cheering', writeTitle, writeDesc, profile.name);
+      setBlogsList(mockDbService.getBlogs().filter(b => b.mode === 'cheering'));
+      alert('블로그 추천 코스가 등록되었습니다! 🎉');
+      setWriteTitle('');
+      setWriteDesc('');
+      setShowWriteModal(false);
+    }
+  };
+
   return (
     <div className="main-layout">
       {/* Top Bar */}
-      <div className="top-bar">
+      <div className="top-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <ArrowLeft className="back-icon" onClick={onBack} />
-        <h2 className="top-bar-title">응원형 추천 정보</h2>
+        <h2 className="top-bar-title" style={{ margin: 0, flex: 1, textAlign: 'center' }}>응원형 추천 정보</h2>
+        {myTeam ? (
+          <div 
+            className={`my-team-badge ${myTeam}`} 
+            onClick={() => onNavigate(3)}
+            style={{ cursor: 'pointer' }}
+          >
+            {myTeam.toUpperCase()}
+          </div>
+        ) : (
+          <div style={{ width: 24 }}></div>
+        )}
       </div>
 
       <div className="main-content scrollable">
@@ -152,7 +182,7 @@ export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }
         {/* Cheering Course Schedule */}
         <div className="section-header space-between">
           <h3>응원 코스 추천 일정</h3>
-          <button className="create-btn"><Plus size={14} /> 작성하기</button>
+          <button className="create-btn" disabled style={{ opacity: 0.6, cursor: 'not-allowed', pointerEvents: 'none' }}><Plus size={14} /> 작성하기</button>
         </div>
 
         <div className="course-card" onClick={() => onNavigate(9)} style={{ cursor: 'pointer' }}>
@@ -188,17 +218,17 @@ export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active" onClick={() => onNavigate(5)}>
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(14)}>
+        <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(12)}>
-          <Mail size={24} />
-          <span>MESSAGE</span>
+        <div className="nav-item" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>

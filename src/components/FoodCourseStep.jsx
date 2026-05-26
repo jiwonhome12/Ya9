@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Home, MapPin, Mail, Share2, X, Check } from 'lucide-react';
+import { ArrowLeft, Home, MapPin, Mail, Share2, X, Check, Bookmark, User } from 'lucide-react';
 import KakaoMap from './KakaoMap';
 
 const FRIENDS_LIST = [
@@ -9,7 +9,7 @@ const FRIENDS_LIST = [
   { id: 4, name: '오정훈', handle: '@oh~' }
 ];
 
-export default function FoodCourseStep({ onBack, onNavigate }) {
+export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], onToggleBlog }) {
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
 
@@ -25,14 +25,26 @@ export default function FoodCourseStep({ onBack, onNavigate }) {
   return (
     <div className="main-layout">
       {/* Top Bar */}
-      <div className="top-bar" style={{ position: 'relative' }}>
+      <div className="top-bar" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
         <ArrowLeft className="back-icon" onClick={onBack} />
-        <h2 className="top-bar-title">맛집 코스 추천 일정</h2>
-        <Share2 
-          className="share-icon" 
-          onClick={() => setShowShareModal(true)} 
-          style={{ cursor: 'pointer', position: 'absolute', right: '16px', color: '#333' }} 
-        />
+        <h2 className="top-bar-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>맛집 코스 추천 일정</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'absolute', right: '16px' }}>
+          <button
+            onClick={() => onToggleBlog('b3')}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
+          >
+            <Bookmark 
+              size={20} 
+              color="var(--primary-color)" 
+              fill={savedBlogs.includes('b3') ? 'var(--primary-color)' : 'none'} 
+            />
+          </button>
+          <Share2 
+            className="share-icon" 
+            onClick={() => setShowShareModal(true)} 
+            style={{ cursor: 'pointer', color: '#333' }} 
+          />
+        </div>
       </div>
 
       <div className="main-content scrollable">
@@ -193,17 +205,17 @@ export default function FoodCourseStep({ onBack, onNavigate }) {
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active">
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(14)}>
+        <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(12)}>
-          <Mail size={24} />
-          <span>MESSAGE</span>
+        <div className="nav-item" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>

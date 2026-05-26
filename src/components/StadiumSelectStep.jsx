@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
-import { Search, Home, MapPin, Mail, Menu } from 'lucide-react';
+import { Search, Home, MapPin, User, Menu } from 'lucide-react';
 
 const STADIUMS = [
-  { id: 'sajik', name: '사직구장', location: '부산 - 롯데', img: '/images/sajik.jpeg' },
-  { id: 'jamsil', name: '잠실구장', location: '서울 - LG/두산', img: '/images/jamsil.jpeg' },
-  { id: 'gocheok', name: '고척돔', location: '서울 - 키움', img: '/images/gocheok.jpeg' },
-  { id: 'wizpark', name: '위즈 파크', location: '수원 - KT', img: '/images/wizpark.jpeg' },
-  { id: 'munhak', name: '문학 구장', location: '인천 - SSG', img: '/images/ssg.jpeg' },
-  { id: 'lionspark', name: '라이온즈 파크', location: '대구 - 삼성', img: '/images/lionspark.jpeg' },
-  { id: 'ballpark', name: '볼 파크', location: '대전 - 한화', img: '/images/hanwha.jpeg' },
-  { id: 'champions', name: '챔피언스필드', location: '광주 - 기아', img: '/images/champions.jpeg' },
-  { id: 'ncpark', name: '엔씨 파크', location: '창원 - NC', img: '/images/ncpark.jpeg' },
+  { id: 'sajik', name: '사직구장', location: '부산 - 롯데', city: '부산', team: '롯데', homeImage: '/images/sajik(1).jpg', awayImage: '/images/sajik.jpeg' },
+  { id: 'jamsil', name: '잠실구장', location: '서울 - LG/두산', city: '서울', team: 'LG/두산', homeImage: '/images/jamsil(1).jpeg', awayImage: '/images/jamsil.jpeg' },
+  { id: 'gocheok', name: '고척돔', location: '서울 - 키움', city: '서울', team: '키움', homeImage: '/images/gocheok(1).jpg', awayImage: '/images/gocheok.jpeg' },
+  { id: 'wizpark', name: '위즈 파크', location: '수원 - KT', city: '수원', team: 'KT', homeImage: '/images/wizpark(1).jpg', awayImage: '/images/wizpark.jpeg' },
+  { id: 'munhak', name: '문학 구장', location: '인천 - SSG', city: '인천', team: 'SSG', homeImage: '/images/ssg(1).jpg', awayImage: '/images/ssg.jpeg' },
+  { id: 'lionspark', name: '라이온즈 파크', location: '대구 - 삼성', city: '대구', team: '삼성', homeImage: '/images/lionspark(1).jpg', awayImage: '/images/lionspark.jpeg' },
+  { id: 'ballpark', name: '볼 파크', location: '대전 - 한화', city: '대전', team: '한화', homeImage: '/images/hanwha(1).jpg', awayImage: '/images/hanwha.jpeg' },
+  { id: 'champions', name: '챔피언스필드', location: '광주 - 기아', city: '광주', team: '기아', homeImage: '/images/champions(1).jpg', awayImage: '/images/champions.jpeg' },
+  { id: 'ncpark', name: '엔씨 파크', location: '창원 - NC', city: '창원', team: 'NC', homeImage: '/images/ncpark(1).jpg', awayImage: '/images/ncpark.jpeg' },
 ];
 
-export default function StadiumSelectStep({ onNext, myTeam }) {
-  const [selectedStadium, setSelectedStadium] = useState(null);
-  const [isAway, setIsAway] = useState(true);
+export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
+  const activeTeam = myTeam || 'lotte';
+  const [selectedStadium, setSelectedStadium] = useState(STADIUMS[1]); // Default Jamsil active in 5.png
+  const [isAway, setIsAway] = useState(true); // Away is active in 5.png
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleNext = () => {
     if (selectedStadium) {
@@ -25,77 +27,236 @@ export default function StadiumSelectStep({ onNext, myTeam }) {
     }
   };
 
+  const filteredStadiums = STADIUMS.filter(s => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    return s.name.toLowerCase().includes(q) || s.location.toLowerCase().includes(q);
+  });
+
   return (
-    <div className="main-layout">
-      {/* Header */}
-      <div className="main-header">
-        <Menu className="menu-icon" />
-        <div className="logo-text">stadium pulse</div>
-        {myTeam && <div className={`my-team-badge ${myTeam}`}>{myTeam.toUpperCase()}</div>}
+    <div className="main-layout" style={{ background: '#FFFFFF', fontFamily: 'Inter, sans-serif' }}>
+      {/* Top Header */}
+      <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF' }}>
+        <Menu className="menu-icon" style={{ cursor: 'pointer', color: '#555555' }} />
+        <div className="logo-text" style={{ fontStyle: 'normal', fontWeight: '800' }}>stadium pulse</div>
+        <div 
+          className={`my-team-badge ${activeTeam}`} 
+          style={{ cursor: 'pointer' }}
+          onClick={() => onNavigate(3)} // Return to MyTeam onboarding
+        >
+          {activeTeam.toUpperCase()}
+        </div>
       </div>
 
-      <div className="main-content">
-        <div className="stadium-header-row">
-          <h2 className="main-title">오늘 어느 구장으로 가시나요?</h2>
-          <div className="toggle-switch" onClick={() => setIsAway(!isAway)}>
-            <div className={`toggle-btn ${isAway ? 'active' : ''}`}>원정</div>
-            <div className={`toggle-btn ${!isAway ? 'active' : ''}`}>홈</div>
-          </div>
-        </div>
-
-        <div className="search-input-wrapper">
-          <Search className="search-icon" size={18} />
-          <input 
-            type="text" 
-            className="search-input" 
-            placeholder="구장 이름 또는 팀명 검색"
-          />
-        </div>
-
-        <div className="stadium-grid">
-          {STADIUMS.map((stadium) => (
+      {/* Main Container */}
+      <div className="main-content scrollable" style={{ background: '#FAFAFA', padding: '16px', paddingBottom: '90px' }}>
+        
+        {/* Title and Home/Away Switcher (5.png) */}
+        <div className="stadium-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '8px 0 16px' }}>
+          <h2 className="main-title" style={{ fontSize: '18px', fontWeight: '800', color: '#111111', margin: 0 }}>
+            오늘 어느 구장으로 가시나요?
+          </h2>
+          
+          {/* Toggle Switch */}
+          <div 
+            className="toggle-switch" 
+            onClick={() => setIsAway(!isAway)}
+            style={{
+              display: 'flex',
+              background: '#EEEEEE',
+              borderRadius: '20px',
+              padding: '2.5px',
+              cursor: 'pointer',
+              border: '1px solid #E0E0E0'
+            }}
+          >
             <div 
-              key={stadium.id} 
-              className={`stadium-card ${selectedStadium?.id === stadium.id ? 'selected' : ''}`}
-              onClick={() => setSelectedStadium(stadium)}
+              className="toggle-btn"
+              style={{
+                padding: '6px 14px',
+                fontSize: '11px',
+                fontWeight: '800',
+                borderRadius: '16px',
+                transition: 'all 0.25s',
+                background: isAway ? 'var(--primary-color)' : 'transparent',
+                color: isAway ? '#FFFFFF' : '#888888'
+              }}
             >
-              <img src={stadium.img} alt={stadium.name} className="stadium-img" />
-              <div className="stadium-info">
-                <div className="stadium-name">{stadium.name}</div>
-                <div className="stadium-location">{stadium.location}</div>
-              </div>
+              원정
             </div>
-          ))}
-        </div>
-
-        {/* Progress Bar */}
-        <div className="progress-section">
-          <div className="progress-bar-bg">
-            <div className="progress-bar-fill" style={{ width: selectedStadium ? '50%' : '10%' }}></div>
+            <div 
+              className="toggle-btn"
+              style={{
+                padding: '6px 14px',
+                fontSize: '11px',
+                fontWeight: '800',
+                borderRadius: '16px',
+                transition: 'all 0.25s',
+                background: !isAway ? 'var(--primary-color)' : 'transparent',
+                color: !isAway ? '#FFFFFF' : '#888888'
+              }}
+            >
+              홈
+            </div>
           </div>
-          <div className="progress-text">step 1/2</div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="action-buttons-row">
-          <button className="skip-btn" onClick={() => alert('구장정보/팬커뮤니티로 이동합니다. (추후 구현)')}>skip</button>
-          <button className="next-btn" onClick={handleNext}>next step</button>
+        {/* Search bar */}
+        <div className="search-input-wrapper" style={{ marginBottom: '20px' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <Search className="search-icon" size={18} style={{ position: 'absolute', left: '12px', color: '#999999' }} />
+            <input 
+              type="text" 
+              className="search-input" 
+              placeholder="구장 이름 또는 팀명 검색"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 12px 12px 38px',
+                border: '1px solid #E2E8F0',
+                borderRadius: '12px',
+                backgroundColor: '#FFFFFF',
+                fontSize: '13px',
+                color: '#333333',
+                outline: 'none'
+              }}
+            />
+          </div>
         </div>
+
+        {/* Stadiums Grid (3 columns matching 5.png) */}
+        <div className="stadium-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '24px' }}>
+          {filteredStadiums.map((stadium) => {
+            const isSelected = selectedStadium?.id === stadium.id;
+            return (
+              <div 
+                key={stadium.id} 
+                className={`stadium-card ${isSelected ? 'selected' : ''}`}
+                onClick={() => setSelectedStadium(stadium)}
+                style={{
+                  border: isSelected ? '2px solid var(--primary-color)' : '1px solid #E2E8F0',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  background: '#FFFFFF',
+                  boxShadow: isSelected ? '0 6px 15px rgba(0,0,0,0.05)' : 'none'
+                }}
+              >
+                {/* Visual Stadium Image */}
+                <div style={{ width: '100%', height: '56px', position: 'relative', overflow: 'hidden', borderBottom: '1px solid #E2E8F0', backgroundColor: '#F1F5F9' }}>
+                  <img 
+                    src={isAway ? stadium.awayImage : stadium.homeImage} 
+                    alt={stadium.name} 
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                  />
+                  {isSelected && (
+                    <div style={{ 
+                      position: 'absolute', 
+                      inset: 0, 
+                      background: 'rgba(108, 67, 235, 0.25)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center' 
+                    }}>
+                      <div style={{ background: '#FFFFFF', borderRadius: '50%', padding: '4px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justify: 'center' }}>
+                        <MapPin size={12} color="var(--primary-color)" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Stadium Info Label */}
+                <div style={{ padding: '8px', textAlign: 'center', minHeight: '52px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#333333', lineHeight: '1.3' }}>{stadium.name}</div>
+                  <div style={{ fontSize: '9px', color: '#888888', fontWeight: '700', marginTop: '3px' }}>
+                    {stadium.city} - {stadium.team}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Progress step-bar (50% filled with KBO team theme color) */}
+        <div className="progress-section" style={{ margin: '8px 0 20px' }}>
+          <div className="progress-bar-bg" style={{ height: '7px', background: '#EAEAEA', borderRadius: '4px', overflow: 'hidden', marginBottom: '6px' }}>
+            <div 
+              className="progress-bar-fill" 
+              style={{ 
+                height: '100%', 
+                width: '50%', 
+                background: 'var(--primary-color)',
+                borderRadius: '4px'
+              }}
+            ></div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '10px', color: '#888888', fontWeight: '700' }}>Where to Go?</span>
+            <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--primary-color)', textTransform: 'uppercase' }}>step 1/2</span>
+          </div>
+        </div>
+
+        {/* Back and Next buttons */}
+        <div className="action-buttons-row" style={{ display: 'flex', gap: '10px' }}>
+          <button 
+            className="skip-btn" 
+            onClick={() => onNavigate(16)} // Goes back to Home step 16
+            style={{
+              flex: 1,
+              padding: '14px',
+              backgroundColor: '#EEEEEE',
+              color: '#666666',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: '700',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
+          >
+            back
+          </button>
+          
+          <button 
+            className="next-btn" 
+            onClick={handleNext}
+            style={{
+              flex: 2,
+              padding: '14px',
+              backgroundColor: 'var(--primary-color)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: '700',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
+          >
+            next step
+          </button>
+        </div>
+
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="bottom-nav">
-        <div className="nav-item active">
+      {/* 3-tab Bottom Navigation */}
+      <div className="bottom-nav" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 70, borderTop: '1px solid #EAEAEA', background: '#FFFFFF', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 30 }}>
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item">
-          <Mail size={24} />
-          <span>COMMUNITY</span>
+        <div className="nav-item" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>

@@ -59,17 +59,17 @@ export default function MessageListStep({ onBack, onNavigate }) {
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item" onClick={() => onNavigate(5)}>
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(14)}>
+        <div className="nav-item" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
         <div className="nav-item active">
           <Mail size={24} />
-          <span>MESSAGE</span>
+          <span>메시지</span>
         </div>
       </div>
     </div>

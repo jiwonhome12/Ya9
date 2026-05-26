@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Home, MapPin, Mail, ArrowLeft } from 'lucide-react';
+import { Home, MapPin, User, ArrowLeft } from 'lucide-react';
 
-export default function TypeSelectStep({ onNext, onBack, stadium, myTeam }) {
+export default function TypeSelectStep({ onNext, onBack, stadium, myTeam, onNavigate }) {
   const [selectedType, setSelectedType] = useState(null);
 
   const handleNext = () => {
@@ -19,7 +19,13 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam }) {
         <ArrowLeft className="back-icon" onClick={onBack} style={{ cursor: 'pointer' }} />
         <div className="logo-text">stadium pulse</div>
         {myTeam ? (
-          <div className={`my-team-badge ${myTeam}`}>{myTeam.toUpperCase()}</div>
+          <div 
+            className={`my-team-badge ${myTeam}`} 
+            onClick={() => onNavigate(3)}
+            style={{ cursor: 'pointer' }}
+          >
+            {myTeam.toUpperCase()}
+          </div>
         ) : (
           <div style={{ width: 24 }}></div>
         )}
@@ -29,9 +35,9 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam }) {
         {/* Progress Bar */}
         <div className="progress-section top-progress">
           <div className="progress-bar-bg">
-            <div className="progress-bar-fill" style={{ width: selectedType ? '100%' : '50%' }}></div>
+            <div className="progress-bar-fill" style={{ width: selectedType ? '100%' : '50%', background: 'var(--primary-color)' }}></div>
           </div>
-          <div className="progress-text">step 2/2</div>
+          <div className="progress-text" style={{ color: 'var(--primary-color)' }}>step 2/2</div>
         </div>
 
         <div className="selected-stadium-info">
@@ -47,6 +53,7 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam }) {
           <div 
             className={`type-card ${selectedType === 'cheering' ? 'selected' : ''}`}
             onClick={() => setSelectedType('cheering')}
+            style={{ borderColor: selectedType === 'cheering' ? 'var(--primary-color)' : '' }}
           >
             <div 
               className="type-card-img" 
@@ -63,6 +70,7 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam }) {
           <div 
             className={`type-card ${selectedType === 'food' ? 'selected' : ''}`}
             onClick={() => setSelectedType('food')}
+            style={{ borderColor: selectedType === 'food' ? 'var(--primary-color)' : '' }}
           >
             <div 
               className="type-card-img" 
@@ -79,23 +87,29 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam }) {
 
         {/* Action Buttons */}
         <div className="action-buttons-row">
-          <button className="next-btn full-width" onClick={handleNext}>next step</button>
+          <button 
+            className="next-btn full-width" 
+            onClick={handleNext}
+            style={{ backgroundColor: 'var(--primary-color)' }}
+          >
+            next step
+          </button>
         </div>
       </div>
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active">
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item">
-          <Mail size={24} />
-          <span>COMMUNITY</span>
+        <div className="nav-item" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>

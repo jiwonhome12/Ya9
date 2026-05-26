@@ -1,8 +1,8 @@
 import React from 'react';
-import { ArrowLeft, Home, MapPin, Mail, Plus } from 'lucide-react';
+import { ArrowLeft, Home, MapPin, Mail, Plus, Heart, User } from 'lucide-react';
 import KakaoMap from './KakaoMap';
 
-export default function FoodDetailStep({ mode, onBack }) {
+export default function FoodDetailStep({ mode, onBack, savedFoods = [], onToggleFood, onNavigate }) {
   const isInside = mode === 'inside';
 
   return (
@@ -31,9 +31,21 @@ export default function FoodDetailStep({ mode, onBack }) {
 
         <div style={{ padding: '20px' }}>
           {/* Store Info Header */}
-          <div className="store-detail-header">
-            <h3>{isInside ? 'OO 떡볶이' : 'xx 치킨'}</h3>
-            <button className="create-btn large"><Plus size={16} /> 작성하기</button>
+          <div className="store-detail-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ margin: 0 }}>{isInside ? 'OO 떡볶이' : 'xx 치킨'}</h3>
+              <button 
+                onClick={() => onToggleFood(isInside ? 'f1' : 'f3')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
+              >
+                <Heart 
+                  size={20} 
+                  color="#E1002A" 
+                  fill={savedFoods.includes(isInside ? 'f1' : 'f3') ? '#E1002A' : 'none'} 
+                />
+              </button>
+            </div>
+            <button className="create-btn large" disabled style={{ opacity: 0.6, cursor: 'not-allowed', pointerEvents: 'none' }}><Plus size={16} /> 작성하기</button>
           </div>
           
           <ul className="store-detail-desc">
@@ -168,17 +180,17 @@ export default function FoodDetailStep({ mode, onBack }) {
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active">
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item">
-          <Mail size={24} />
-          <span>COMMUNITY</span>
+        <div className="nav-item" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>

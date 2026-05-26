@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, MapPin, Home, Mail, X } from 'lucide-react';
+import { Menu, MapPin, Home, User, X } from 'lucide-react';
 import KakaoMap from './KakaoMap';
 
 export default function CommunityMapStep({ stadium, onBack, onNavigate, onAddPing }) {
@@ -111,17 +111,17 @@ export default function CommunityMapStep({ stadium, onBack, onNavigate, onAddPin
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item" onClick={() => onNavigate(5)}>
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item active">
+        <div className="nav-item" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item" onClick={() => onNavigate(12)}>
-          <Mail size={24} />
-          <span>MESSAGE</span>
+        <div className="nav-item active" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>

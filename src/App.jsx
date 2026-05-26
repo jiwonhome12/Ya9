@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoginStep from './components/LoginStep';
 import ProfileStep from './components/ProfileStep';
 import MyTeamStep from './components/MyTeamStep';
@@ -6,6 +6,7 @@ import StadiumSelectStep from './components/StadiumSelectStep';
 import TypeSelectStep from './components/TypeSelectStep';
 import CheeringInfoStep from './components/CheeringInfoStep';
 import FoodInfoStep from './components/FoodInfoStep';
+import { mockDbService } from './services/mockDb';
 
 import CheeringSeatInfoStep from './components/CheeringSeatInfoStep';
 import CheeringCourseStep from './components/CheeringCourseStep';
@@ -15,6 +16,21 @@ import MessageListStep from './components/MessageListStep';
 import ChatRoomStep from './components/ChatRoomStep';
 import CommunityMapStep from './components/CommunityMapStep';
 import CommunityListStep from './components/CommunityListStep';
+import HomeStep from './components/HomeStep';
+import MyPageStep from './components/MyPageStep';
+
+const TEAM_COLORS = {
+  kt: '#000000',
+  lg: '#C30452',
+  kia: '#EA0029',
+  doosan: '#131230',
+  samsung: '#074CA1',
+  ssg: '#CE0E2D',
+  nc: '#3152A5',
+  lotte: '#D0112A',
+  kiwoom: '#820024',
+  hanwha: '#FF6600'
+};
 
 const INITIAL_FEED = [
   {
@@ -51,11 +67,50 @@ const INITIAL_FEED = [
 
 function App() {
   const [step, setStep] = useState(1);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedTeam, setSelectedTeam] = useState(() => {
+    const profile = mockDbService.getUserProfile();
+    return profile ? profile.team : 'lotte';
+  });
   const [selectedStadium, setSelectedStadium] = useState(null);
   const [selectedType, setSelectedType] = useState(null); // 'cheering' or 'food'
   const [foodDetailMode, setFoodDetailMode] = useState('inside'); // 'inside' or 'outside'
   const [feedData, setFeedData] = useState(INITIAL_FEED);
+
+  // Saved food and blogs scraps state
+  const [savedFoods, setSavedFoods] = useState(() => {
+    const stored = localStorage.getItem('bmw_saved_foods');
+    return stored ? JSON.parse(stored) : [];
+  });
+  const [savedBlogs, setSavedBlogs] = useState(() => {
+    const stored = localStorage.getItem('bmw_saved_blogs');
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  const [myPageTab, setMyPageTab] = useState('diary');
+
+  // Sync KBO team brand colors globally
+  useEffect(() => {
+    if (selectedTeam) {
+      document.body.style.setProperty('--primary-color', TEAM_COLORS[selectedTeam] || '#6C43EB');
+      document.body.setAttribute('data-theme', selectedTeam);
+    }
+  }, [selectedTeam]);
+
+  const toggleSaveFood = (foodId) => {
+    setSavedFoods(prev => {
+      const updated = prev.includes(foodId) ? prev.filter(id => id !== foodId) : [...prev, foodId];
+      localStorage.setItem('bmw_saved_foods', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const toggleSaveBlog = (blogId) => {
+    setSavedBlogs(prev => {
+      const updated = prev.includes(blogId) ? prev.filter(id => id !== blogId) : [...prev, blogId];
+      localStorage.setItem('bmw_saved_blogs', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const handleAddPing = (newPing) => {
     setFeedData(prev => [{
@@ -74,7 +129,8 @@ function App() {
 
   const handleTeamFinish = (teamId) => {
     setSelectedTeam(teamId);
-    setStep(4);
+    mockDbService.saveUserProfile({ team: teamId });
+    setStep(16); // Navigate directly to HomeStep Dashboard (step 16)
   };
 
   const handleStadiumSelect = (stadium) => {
@@ -97,18 +153,23 @@ function App() {
       setStep(5); // Back to Type Select
     } else if (step === 5) {
       setStep(4); // Back to Stadium Select
-    } else if (step === 12 || step === 14) {
-      setStep(5); // Back to Type Select from main tabs
+    } else if (step === 12 || step === 14 || step === 17) {
+      setStep(16); // Back to Home from main tabs
     } else if (step === 13) {
       setStep(12); // Back to MessageList from Chat
     } else if (step === 15) {
       setStep(14); // Back to Map from Feed List
+    } else if (step === 4) {
+      setStep(16); // Back to Home from Stadium Select
     }
   };
 
   const navigateTo = (newStep, params) => {
     if (newStep === 10 && params?.mode) {
       setFoodDetailMode(params.mode);
+    }
+    if (newStep === 17) {
+      setMyPageTab(params?.tab || 'diary');
     }
     setStep(newStep);
   };
@@ -119,22 +180,35 @@ function App() {
       {step === 2 && <ProfileStep onNext={nextStep} />}
       {step === 3 && <MyTeamStep onNext={handleTeamFinish} />}
       
-      {step === 4 && <StadiumSelectStep onNext={handleStadiumSelect} myTeam={selectedTeam} />}
-      {step === 5 && <TypeSelectStep onNext={handleTypeSelect} onBack={goBack} stadium={selectedStadium} myTeam={selectedTeam} />}
+      {step === 4 && <StadiumSelectStep onNext={handleStadiumSelect} myTeam={selectedTeam} onNavigate={navigateTo} />}
+      {step === 5 && <TypeSelectStep onNext={handleTypeSelect} onBack={goBack} stadium={selectedStadium} myTeam={selectedTeam} onNavigate={navigateTo} />}
       
       {step === 6 && <CheeringInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} />}
       {step === 7 && <FoodInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} />}
 
-      {step === 8 && <CheeringSeatInfoStep stadium={selectedStadium} onBack={goBack} />}
-      {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} />}
-      {step === 10 && <FoodDetailStep stadium={selectedStadium} mode={foodDetailMode} onBack={goBack} />}
-      {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} />}
+      {step === 8 && <CheeringSeatInfoStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} />}
+      {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} />}
+      {step === 10 && <FoodDetailStep stadium={selectedStadium} mode={foodDetailMode} onBack={goBack} onNavigate={navigateTo} savedFoods={savedFoods} onToggleFood={toggleSaveFood} />}
+      {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} />}
 
       {step === 12 && <MessageListStep onBack={goBack} onNavigate={navigateTo} />}
       {step === 13 && <ChatRoomStep onBack={goBack} onNavigate={navigateTo} />}
       
       {step === 14 && <CommunityMapStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} onAddPing={handleAddPing} />}
       {step === 15 && <CommunityListStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} feedData={feedData} />}
+
+      {step === 16 && <HomeStep onNavigate={navigateTo} myTeam={selectedTeam} selectedStadium={selectedStadium} />}
+      {step === 17 && (
+        <MyPageStep 
+          onNavigate={navigateTo} 
+          myTeam={selectedTeam} 
+          savedFoods={savedFoods} 
+          savedBlogs={savedBlogs} 
+          onToggleFood={toggleSaveFood} 
+          onToggleBlog={toggleSaveBlog} 
+          initialTab={myPageTab}
+        />
+      )}
     </>
   );
 }

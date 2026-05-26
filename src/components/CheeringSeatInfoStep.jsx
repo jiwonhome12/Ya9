@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Home, MapPin, Mail } from 'lucide-react';
+import { ArrowLeft, Home, MapPin, Mail, User } from 'lucide-react';
 
 const SEAT_MAPS = {
   sajik: 'sajik(1).jpg',
@@ -25,7 +25,7 @@ const TICKETING_URLS = {
   ncpark: 'https://www.ticketlink.co.kr/sports/baseball/60' 
 };
 
-export default function CheeringSeatInfoStep({ stadium, onBack }) {
+export default function CheeringSeatInfoStep({ stadium, onBack, onNavigate }) {
   const seatMapImg = stadium ? SEAT_MAPS[stadium.id] : 'jamsil(1).jpeg';
   const ticketUrl = stadium ? TICKETING_URLS[stadium.id] : 'https://ticket.interpark.com/Contents/Sports';
 
@@ -90,17 +90,17 @@ export default function CheeringSeatInfoStep({ stadium, onBack }) {
 
       {/* Bottom Navigation */}
       <div className="bottom-nav">
-        <div className="nav-item active">
+        <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>HOME</span>
+          <span>홈</span>
         </div>
-        <div className="nav-item">
+        <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>MY COURSES</span>
+          <span>Where to Go?</span>
         </div>
-        <div className="nav-item">
-          <Mail size={24} />
-          <span>COMMUNITY</span>
+        <div className="nav-item" onClick={() => onNavigate(17)}>
+          <User size={24} />
+          <span>마이</span>
         </div>
       </div>
     </div>
