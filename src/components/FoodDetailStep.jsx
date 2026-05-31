@@ -12,6 +12,9 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [targetFoodId, setTargetFoodId] = useState(null);
+  
+  // Track expanded menu board per restaurant
+  const [expandedId, setExpandedId] = useState(null);
 
   // Form states
   const [foodName, setFoodName] = useState('');
@@ -19,6 +22,9 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
   const [foodDesc, setFoodDesc] = useState('');
   const [foodRating, setFoodRating] = useState(5);
   const [foodImage, setFoodImage] = useState('');
+  
+  // Dynamic menus builder state
+  const [menusInput, setMenusInput] = useState([{ name: '', price: '' }]);
 
   // Load foods dynamically
   const loadFoods = () => {
@@ -50,10 +56,12 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
     setFoodDesc('');
     setFoodRating(5);
     setFoodImage('');
+    setMenusInput([{ name: '', price: '' }]);
     setShowModal(true);
   };
 
-  const handleOpenEdit = (food) => {
+  const handleOpenEdit = (food, e) => {
+    e.stopPropagation(); // Avoid triggering card toggle
     setIsEditMode(true);
     setTargetFoodId(food.id);
     setFoodName(food.name);
@@ -61,10 +69,12 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
     setFoodDesc(food.desc);
     setFoodRating(Math.round(food.rating));
     setFoodImage(food.image || '');
+    setMenusInput(food.menus && food.menus.length > 0 ? food.menus.map(m => ({ name: m.name, price: m.price.toString() })) : [{ name: '', price: '' }]);
     setShowModal(true);
   };
 
-  const handleDeleteFood = (id) => {
+  const handleDeleteFood = (id, e) => {
+    e.stopPropagation(); // Avoid triggering card toggle
     if (window.confirm('정말 이 맛집 추천을 삭제하시겠습니까? 😢')) {
       mockDbService.deleteFoodEntry(id);
       loadFoods();
@@ -79,16 +89,35 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
       return;
     }
 
+    // Filter out incomplete menu rows
+    const cleanedMenus = menusInput
+      .filter(m => m.name.trim() !== '')
+      .map(m => ({ name: m.name, price: parseInt(m.price) || 0 }));
+
     if (isEditMode) {
-      mockDbService.updateFoodEntry(targetFoodId, foodName, foodPrice, foodDesc, foodRating, foodImage);
+      mockDbService.updateFoodEntry(targetFoodId, foodName, foodPrice, foodDesc, foodRating, foodImage, cleanedMenus);
       alert('맛집 정보가 수정되었습니다! ✏️');
     } else {
-      mockDbService.addFoodEntry(currentStadiumId, mode, foodName, foodPrice, foodDesc, foodRating, foodImage);
+      mockDbService.addFoodEntry(currentStadiumId, mode, foodName, foodPrice, foodDesc, foodRating, foodImage, cleanedMenus);
       alert('새로운 맛집이 등록되었습니다! 🎉');
     }
 
     setShowModal(false);
     loadFoods();
+  };
+
+  // Helper to fetch dynamic menus or fallback to default ones
+  const getRestaurantMenus = (food) => {
+    if (food.menus && food.menus.length > 0) {
+      return food.menus;
+    }
+    // Premium fallback menus
+    return [
+      { name: food.name + ' (대표 시그니쳐)', price: food.price },
+      { name: '세트 업그레이드 (+음료/사이드)', price: food.price + 3500 },
+      { name: '바삭 감자튀김 추가', price: 5000 },
+      { name: '시원한 캔맥주 추가', price: 4000 }
+    ];
   };
 
   // Calculate average rating
@@ -135,93 +164,144 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
           </div>
           
           <ul className="store-detail-desc" style={{ paddingLeft: '20px', margin: '0 0 16px 0', fontSize: '12px', color: '#666', lineHeight: '1.6' }}>
+            <li>식당 카드를 <strong>클릭</strong>하면 상세 <strong>메뉴판 (Menu Board)</strong>이 아래로 펼쳐집니다!</li>
             {isInside ? (
-              <>
-                <li>경기 중 간편하게 즐길 수 있는 구장 내 최고 인기 먹거리 리스트입니다.</li>
-                <li>인기 매장은 클리닝 타임 및 경기 시작 전 대기 시간이 길어질 수 있습니다.</li>
-              </>
+              <li>경기 중 즐기기 좋은 구장 내 최고의 인기 식당입니다. 클리닝 타임 대기가 있을 수 있습니다.</li>
             ) : (
-              <>
-                <li>야구장 도보 10분 거리 이내로, 경기 전 미리 포장/주문 픽업할 수 있는 알짜배기 맛집 정보입니다.</li>
-                <li>미리 주문 시 포장 할인이나 야구 티켓 혜택을 챙겨보세요!</li>
-              </>
+              <li>야구장 도보 10분 거리 이내로, 경기 전 포장/픽업하기에 완벽한 맛집 리스트입니다.</li>
             )}
           </ul>
 
           <div className="divider" style={{ margin: '16px 0', borderBottom: '1px solid #EAEAEA' }}></div>
 
-          {/* Foods/Stores List */}
+          {/* Restaurants & Menus List */}
           <div className="menu-list" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {foodsList.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px 20px', color: '#888', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '24px' }}>🥄</span>
-                <p style={{ fontSize: '13px', fontWeight: '600', margin: 0 }}>등록된 맛집 정보가 아직 없습니다.</p>
-                <p style={{ fontSize: '11px', color: '#aaa', margin: 0 }}>우측 상단의 "작성하기"를 통해 구장의 핫플레이스를 추천해 보세요!</p>
+                <p style={{ fontSize: '13px', fontWeight: '600', margin: 0 }}>등록된 식당 정보가 아직 없습니다.</p>
+                <p style={{ fontSize: '11px', color: '#aaa', margin: 0 }}>우측 상단의 "작성하기"를 통해 구장의 첫 식당을 등록해보세요!</p>
               </div>
             ) : (
-              foodsList.map((food, idx) => (
-                <div key={food.id}>
-                  {idx > 0 && <div className="divider" style={{ margin: '16px 0', borderBottom: '1px solid #F1F5F9' }}></div>}
-                  <div className="menu-item" style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', position: 'relative' }}>
+              foodsList.map((food, idx) => {
+                const isExpanded = expandedId === food.id;
+                return (
+                  <div key={food.id}>
+                    {idx > 0 && <div className="divider" style={{ margin: '16px 0', borderBottom: '1px solid #F1F5F9' }}></div>}
                     
-                    {/* Food Photo Container */}
-                    <div style={{ width: '80px', height: '80px', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#F1F5F9', flexShrink: 0, border: '1px solid #EAEAEA' }}>
-                      {food.image ? (
-                        <img src={food.image} alt={food.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: '#BBB' }}>🍔</div>
+                    {/* Restaurant Clickable Card */}
+                    <div 
+                      onClick={() => setExpandedId(isExpanded ? null : food.id)}
+                      className="restaurant-card-wrapper"
+                      style={{ 
+                        padding: '12px', 
+                        borderRadius: '14px', 
+                        border: isExpanded ? '1px solid var(--primary-color)' : '1px solid #EAEAEA', 
+                        backgroundColor: '#FFF', 
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxShadow: isExpanded ? '0 4px 12px rgba(108,67,235,0.08)' : 'none'
+                      }}
+                    >
+                      <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                        
+                        {/* Restaurant Cover Photo */}
+                        <div style={{ width: '80px', height: '80px', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#F1F5F9', flexShrink: 0, border: '1px solid #EAEAEA' }}>
+                          {food.image ? (
+                            <img src={food.image} alt={food.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: '#BBB' }}>🏪</div>
+                          )}
+                        </div>
+
+                        {/* Restaurant Main Info */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '850', color: '#111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {food.name}
+                            </h4>
+                            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                              {/* Wishlist toggle */}
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); onToggleFood(food.id); }}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px' }}
+                              >
+                                <Heart 
+                                  size={15} 
+                                  color="#E1002A" 
+                                  fill={savedFoods.includes(food.id) ? '#E1002A' : 'none'} 
+                                />
+                              </button>
+                              {/* Edit Button */}
+                              <button 
+                                onClick={(e) => handleOpenEdit(food, e)}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px', color: '#666' }}
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                              {/* Delete Button */}
+                              <button 
+                                onClick={(e) => handleDeleteFood(food.id, e)}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px', color: '#E1002A' }}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
+                            <div style={{ display: 'flex', color: '#FFB800' }}>
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star key={i} size={11} fill={i < Math.round(food.rating) ? '#FFB800' : 'none'} stroke={i < Math.round(food.rating) ? 'none' : '#DDD'} />
+                              ))}
+                            </div>
+                            <span style={{ fontSize: '11px', fontWeight: '800', color: '#666' }}>{food.rating.toFixed(1)}</span>
+                          </div>
+                          
+                          <p style={{ margin: '0 0 6px 0', fontSize: '11.5px', color: '#666', lineHeight: '1.4' }}>{food.desc}</p>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                            <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--primary-color)' }}>
+                              대표가 ₩{food.price.toLocaleString()}
+                            </span>
+                            <span style={{ fontSize: '10.5px', color: 'var(--primary-color)', fontWeight: '850', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                              {isExpanded ? '▲ 메뉴판 접기' : '▼ 메뉴판 펼치기'}
+                            </span>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* Expandable Menu Board inside Restaurant card */}
+                      {isExpanded && (
+                        <div 
+                          onClick={(e) => e.stopPropagation()} // Stop click through to collapse
+                          style={{ 
+                            marginTop: '12px', 
+                            padding: '12px 14px', 
+                            backgroundColor: '#F8FAFC', 
+                            borderRadius: '10px', 
+                            border: '1px solid #E2E8F0',
+                            animation: 'fadeIn 0.2s ease-out'
+                          }}
+                        >
+                          <h5 style={{ margin: '0 0 10px 0', fontSize: '12.5px', fontWeight: '850', color: 'var(--primary-color)', borderBottom: '1px solid #E2E8F0', paddingBottom: '6px' }}>
+                            📋 식당 메뉴판 (Menu Board)
+                          </h5>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {getRestaurantMenus(food).map((menu, mIdx) => (
+                              <div key={mIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11.5px' }}>
+                                <span style={{ fontWeight: '700', color: '#444' }}>{menu.name}</span>
+                                <div style={{ flex: 1, borderBottom: '1px dashed #E2E8F0', margin: '0 8px' }}></div>
+                                <span style={{ fontWeight: '800', color: '#111' }}>₩{(parseInt(menu.price) || 0).toLocaleString()}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </div>
-
-                    {/* Food Info */}
-                    <div className="menu-info" style={{ flex: 1, minWidth: 0 }}>
-                      <div className="menu-title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                        <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{food.name}</h4>
-                        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                          {/* Heart/Like Toggle */}
-                          <button 
-                            onClick={() => onToggleFood(food.id)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px' }}
-                          >
-                            <Heart 
-                              size={16} 
-                              color="#E1002A" 
-                              fill={savedFoods.includes(food.id) ? '#E1002A' : 'none'} 
-                            />
-                          </button>
-                          {/* Edit Button */}
-                          <button 
-                            onClick={() => handleOpenEdit(food)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px', color: '#666' }}
-                          >
-                            <Edit2 size={15} />
-                          </button>
-                          {/* Delete Button */}
-                          <button 
-                            onClick={() => handleDeleteFood(food.id)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px', color: '#E1002A' }}
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
-                        <div style={{ display: 'flex', color: '#FFB800' }}>
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} size={11} fill={i < Math.round(food.rating) ? '#FFB800' : 'none'} stroke={i < Math.round(food.rating) ? 'none' : '#DDD'} />
-                          ))}
-                        </div>
-                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#666' }}>{food.rating.toFixed(1)}</span>
-                      </div>
-                      <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#666', lineHeight: '1.4' }}>{food.desc}</p>
-                      <div className="menu-price" style={{ fontSize: '14px', fontWeight: '800', color: 'var(--primary-color)' }}>
-                        ₩{food.price.toLocaleString()}
-                      </div>
-                    </div>
-
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
@@ -238,13 +318,13 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
               onClick={() => setShowModal(false)} 
             />
             <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '16px' }}>
-              {isEditMode ? '맛집 추천 수정하기 ✏️' : '새로운 맛집 추천 등록 🥄'}
+              {isEditMode ? '식당/메뉴판 수정하기 ✏️' : '새로운 식당/메뉴판 등록 🏪'}
             </h3>
             
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {/* Photo Upload */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>맛집 사진 등록 📸</label>
+                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>식당 전경/대표 사진 📸</label>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                   <button
                     type="button"
@@ -270,12 +350,12 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
 
               {/* Food Name Field */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>메뉴/상호 이름</label>
+                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>식당 상호명</label>
                 <input 
                   type="text" 
                   value={foodName} 
                   onChange={(e) => setFoodName(e.target.value)}
-                  placeholder="예: 잠실 명물 김치말이 국수, 수제 닭강정 등"
+                  placeholder="예: 잠실 명물 삼겹살 광장, 보영만두 수원직영 등"
                   style={{ padding: '10px 12px', fontSize: '13px', border: '1px solid #E2E8F0', borderRadius: '10px', outline: 'none' }}
                   required
                 />
@@ -284,18 +364,18 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
               {/* Price & Rating Row */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>대표 가격 (원)</label>
+                  <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>대표 메뉴 가격 (원)</label>
                   <input 
                     type="number" 
                     value={foodPrice} 
                     onChange={(e) => setFoodPrice(e.target.value)}
-                    placeholder="예: 6500"
+                    placeholder="예: 18000"
                     style={{ padding: '10px 12px', fontSize: '13px', border: '1px solid #E2E8F0', borderRadius: '10px', outline: 'none' }}
                     required
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>평점 추천</label>
+                  <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>식당 평점</label>
                   <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '38px', padding: '0 4px' }}>
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star 
@@ -313,21 +393,73 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
 
               {/* Description Field */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>추천 팁 및 설명</label>
+                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333' }}>식당 한줄평 / 추천 팁</label>
                 <textarea 
                   value={foodDesc} 
                   onChange={(e) => setFoodDesc(e.target.value)}
-                  placeholder="대기 시간 정보, 꿀 조합 정보 등을 남겨주세요!"
-                  style={{ padding: '10px 12px', fontSize: '13px', border: '1px solid #E2E8F0', borderRadius: '10px', outline: 'none', minHeight: '60px', resize: 'none' }}
+                  placeholder="예: 1루 내야 삼겹살 광장에 위치! 대기 줄이 길지만 회전율이 빨라요"
+                  style={{ padding: '10px 12px', fontSize: '13px', border: '1px solid #E2E8F0', borderRadius: '10px', outline: 'none', minHeight: '50px', resize: 'none' }}
                   required
                 />
+              </div>
+
+              {/* Dynamic Menu Board Builder */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>식당 메뉴 리스트 구성 📋</span>
+                  <button 
+                    type="button"
+                    onClick={() => setMenusInput([...menusInput, { name: '', price: '' }])}
+                    style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontSize: '11px', fontWeight: '850', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '2px' }}
+                  >
+                    + 메뉴 추가
+                  </button>
+                </label>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto', paddingRight: '4px' }}>
+                  {menusInput.map((m, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <input 
+                        type="text" 
+                        placeholder="메뉴명" 
+                        value={m.name} 
+                        onChange={(e) => {
+                          const next = [...menusInput];
+                          next[idx].name = e.target.value;
+                          setMenusInput(next);
+                        }}
+                        style={{ flex: 2, padding: '8px 10px', fontSize: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', outline: 'none' }}
+                      />
+                      <input 
+                        type="number" 
+                        placeholder="가격(원)" 
+                        value={m.price} 
+                        onChange={(e) => {
+                          const next = [...menusInput];
+                          next[idx].price = e.target.value;
+                          setMenusInput(next);
+                        }}
+                        style={{ flex: 1.2, padding: '8px 10px', fontSize: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', outline: 'none' }}
+                      />
+                      {menusInput.length > 1 && (
+                        <button 
+                          type="button" 
+                          onClick={() => setMenusInput(menusInput.filter((_, i) => i !== idx))}
+                          style={{ background: 'none', border: 'none', color: '#E1002A', cursor: 'pointer', padding: '4px' }}
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <button 
                 type="submit" 
                 style={{ width: '100%', padding: '12px', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', transition: 'opacity 0.2s', marginTop: '6px' }}
               >
-                {isEditMode ? '수정 완료하기' : '맛집 등록하기'}
+                {isEditMode ? '식당/메뉴판 수정 완료' : '식당/메뉴판 등록하기'}
               </button>
             </form>
           </div>

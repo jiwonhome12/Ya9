@@ -116,64 +116,143 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
           <p className="banner-caption">* 사진 선택시 구장 정보 및 실시간 안내사항 확인 가능 - 구단 홈페이지로 이동</p>
         </div>
 
-        {/* Nearby Restaurants (Premium Swipe Layout) */}
-        <div className="section-header space-between" style={{ marginTop: '30px' }}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            🥄 구장 내 핫플레이스
+        {/* Inside Stadium Hotplaces Section (Mockup Card Layout) */}
+        <div className="section-header space-between" style={{ marginTop: '24px', alignItems: 'center' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0, fontSize: '17px', fontWeight: '800' }}>
+            🥄 구장 내 맛집
           </h3>
-          <div className="more-link-blue" style={{ margin: 0 }} onClick={() => onNavigate(10, { mode: 'inside' })}>전체보기</div>
+          <span style={{ backgroundColor: '#FADBD8', color: '#E74C3C', fontSize: '9px', fontWeight: '900', padding: '3px 8px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            HOT PLACE
+          </span>
         </div>
         
-        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '20px', scrollbarWidth: 'none', margin: '0 -16px', padding: '0 16px 20px', WebkitOverflowScrolling: 'touch' }}>
-          {mockDbService.getFoods().filter(f => f.stadiumId === (stadium?.id || 'jamsil') && f.type === 'inside').length === 0 ? (
-            <div style={{ padding: '20px', color: '#888', fontSize: '12px', fontWeight: '600' }}>등록된 구장 내 맛집이 없습니다. 🥄</div>
-          ) : (
-            mockDbService.getFoods().filter(f => f.stadiumId === (stadium?.id || 'jamsil') && f.type === 'inside').map(food => (
-              <div key={food.id} className="food-premium-card" onClick={() => onNavigate(10, { mode: 'inside' })} style={{ cursor: 'pointer', flexShrink: 0, width: '220px' }}>
-                <div className="food-premium-img" style={{ backgroundImage: `url(${food.image})`, backgroundColor: '#F1F5F9' }}>
-                  <div className="food-premium-badge hot">⭐ {food.rating.toFixed(1)}</div>
-                </div>
-                <div className="food-premium-content">
-                  <h4 className="food-premium-title">{food.name}</h4>
-                  <p className="food-premium-desc" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', height: '36px' }}>{food.desc}</p>
-                  <div className="food-premium-footer">
-                    <span className="food-premium-price">₩{food.price.toLocaleString()}</span>
-                    <span className="food-premium-meta">인기🔥</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '12px' }}>
+          {(() => {
+            const currentStadiumFoods = mockDbService.getFoods().filter(f => f.stadiumId === (stadium?.id || 'jamsil') && f.type === 'inside');
+            // If empty, fall back to Jamsil inside foods as beautiful visual examples
+            const displayFoods = currentStadiumFoods.length > 0 
+              ? currentStadiumFoods 
+              : mockDbService.getFoods().filter(f => f.stadiumId === 'jamsil' && f.type === 'inside');
+
+            return displayFoods.slice(0, 2).map((food, idx) => {
+              const isActive = idx === 0; // First item is highlighted active as per mockup
+              const descPoints = food.desc.split(/[!|.]/).filter(p => p.trim() !== '');
+
+              return (
+                <div 
+                  key={food.id} 
+                  onClick={() => onNavigate(10, { mode: 'inside' })}
+                  style={{ 
+                    cursor: 'pointer',
+                    borderRadius: '16px',
+                    border: isActive ? '2px solid var(--primary-color)' : '1px solid #E2E8F0',
+                    overflow: 'hidden',
+                    backgroundColor: '#FFFFFF',
+                    boxShadow: isActive ? '0 4px 12px rgba(108,67,235,0.08)' : '0 2px 6px rgba(0,0,0,0.02)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {/* Big Image Banner with Rating pill */}
+                  <div style={{ position: 'relative', width: '100%', height: '150px', backgroundImage: `url(${food.image})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: '#F1F5F9' }}>
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', backgroundColor: '#48C9B0', color: '#FFFFFF', fontSize: '11px', fontWeight: '850', padding: '4px 10px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      ⭐ {food.rating.toFixed(1)}
+                    </div>
+                  </div>
+
+                  {/* Food/Store Info */}
+                  <div style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '850', color: '#111' }}>{food.name}</h4>
+                      <span style={{ fontSize: '14px', fontWeight: '850', color: 'var(--primary-color)' }}>
+                        ₩{food.price.toLocaleString()}
+                      </span>
+                    </div>
+                    
+                    <ul style={{ listStyleType: 'disc', paddingLeft: '16px', margin: '8px 0 0 0', fontSize: '11.5px', color: '#666', lineHeight: '1.5' }}>
+                      {descPoints.slice(0, 2).map((point, pIdx) => (
+                        <li key={pIdx}>{point.trim()}</li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              );
+            });
+          })()}
         </div>
 
-        {/* Outside Restaurants (Premium Swipe Layout) */}
-        <div className="section-header space-between" style={{ marginTop: '16px' }}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            🍻 구장 근처 픽업 추천
+        <div 
+          onClick={() => onNavigate(10, { mode: 'inside' })} 
+          style={{ textAlign: 'center', color: 'var(--primary-color)', fontSize: '12px', fontWeight: '850', cursor: 'pointer', margin: '12px 0 24px' }}
+        >
+          더보기
+        </div>
+
+        <div className="divider" style={{ borderBottom: '1px solid #EAEAEA', margin: '16px 0' }}></div>
+
+        {/* Near Stadium Restaurants Section (Mockup Row Layout) */}
+        <div style={{ marginTop: '20px' }}>
+          <h3 style={{ fontSize: '17px', fontWeight: '800', margin: '0 0 12px 0', color: '#111' }}>
+            구장 근처 맛집
           </h3>
-          <div className="more-link-blue" style={{ margin: 0 }} onClick={() => onNavigate(10, { mode: 'outside' })}>전체보기</div>
         </div>
         
-        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '24px', scrollbarWidth: 'none', margin: '0 -16px', padding: '0 16px 24px', WebkitOverflowScrolling: 'touch' }}>
-          {mockDbService.getFoods().filter(f => f.stadiumId === (stadium?.id || 'jamsil') && f.type === 'outside').length === 0 ? (
-            <div style={{ padding: '20px', color: '#888', fontSize: '12px', fontWeight: '600' }}>등록된 구장 근처 픽업 추천이 없습니다. 🍻</div>
-          ) : (
-            mockDbService.getFoods().filter(f => f.stadiumId === (stadium?.id || 'jamsil') && f.type === 'outside').map(food => (
-              <div key={food.id} className="food-premium-card" onClick={() => onNavigate(10, { mode: 'outside' })} style={{ cursor: 'pointer', flexShrink: 0, width: '220px' }}>
-                <div className="food-premium-img" style={{ backgroundImage: `url(${food.image})`, backgroundColor: '#F1F5F9' }}>
-                  <div className="food-premium-badge">⭐ {food.rating.toFixed(1)}</div>
-                </div>
-                <div className="food-premium-content">
-                  <h4 className="food-premium-title">{food.name}</h4>
-                  <p className="food-premium-desc" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', height: '36px' }}>{food.desc}</p>
-                  <div className="food-premium-footer">
-                    <span className="food-premium-price">₩{food.price.toLocaleString()}</span>
-                    <span className="food-premium-meta">추천👍</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {(() => {
+            const currentStadiumFoods = mockDbService.getFoods().filter(f => f.stadiumId === (stadium?.id || 'jamsil') && f.type === 'outside');
+            // If empty, fall back to Jamsil outside foods as beautiful visual examples
+            const displayFoods = currentStadiumFoods.length > 0 
+              ? currentStadiumFoods 
+              : mockDbService.getFoods().filter(f => f.stadiumId === 'jamsil' && f.type === 'outside');
+
+            return displayFoods.slice(0, 2).map((food, idx) => {
+              const isActive = idx === 0; // First item is highlighted active as per mockup
+              const distanceText = idx === 0 ? '330MM * 도보 3분' : '660MM * 도보 10분';
+
+              return (
+                <div 
+                  key={food.id}
+                  onClick={() => onNavigate(10, { mode: 'outside' })}
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 14px',
+                    borderRadius: '16px',
+                    border: isActive ? '2px solid var(--primary-color)' : '1px solid #E2E8F0',
+                    backgroundColor: '#FFFFFF',
+                    boxShadow: isActive ? '0 4px 12px rgba(108,67,235,0.08)' : '0 2px 6px rgba(0,0,0,0.02)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {/* Small Square Image */}
+                  <div style={{ width: '56px', height: '56px', borderRadius: '10px', backgroundImage: `url(${food.image})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: '#F1F5F9', flexShrink: 0 }} />
+
+                  {/* Middle Proximity Info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '13.5px', fontWeight: '850', color: '#111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {food.name}
+                    </h4>
+                    <span style={{ fontSize: '10.5px', color: '#666', fontWeight: '750', display: 'block' }}>
+                      {distanceText}
+                    </span>
+                  </div>
+
+                  {/* Right Chevron arrow icon */}
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', flexShrink: 0 }}>
+                    <ChevronRight size={16} />
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              );
+            });
+          })()}
+        </div>
+
+        <div 
+          onClick={() => onNavigate(10, { mode: 'outside' })} 
+          style={{ textAlign: 'center', color: 'var(--primary-color)', fontSize: '12px', fontWeight: '850', cursor: 'pointer', margin: '12px 0 24px' }}
+        >
+          더보기
         </div>
 
         {/* Food Course Schedule */}
