@@ -475,7 +475,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
         </div>
 
         {/* 2026 Season Calendar */}
-        <div style={{ position: 'relative', background: '#FFFFFF', padding: '6px 6px 8px', borderRadius: '16px', border: '1px solid #EAEAEA', marginBottom: '4px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', background: '#FFFFFF', padding: '6px 6px 8px', borderRadius: '16px', border: '1px solid #EAEAEA', marginBottom: '4px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)', overflow: 'visible' }}>
           
           {/* CSS Animation Keyframes */}
           <style>{`
