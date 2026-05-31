@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { Search, Home, MapPin, User, Menu } from 'lucide-react';
 
 const STADIUMS = [
-  { id: 'sajik', name: '사직구장', location: '부산 - 롯데', city: '부산', team: '롯데', homeImage: '/images/sajik(1).jpg', awayImage: '/images/sajik.jpeg' },
-  { id: 'jamsil', name: '잠실구장', location: '서울 - LG/두산', city: '서울', team: 'LG/두산', homeImage: '/images/jamsil(1).jpeg', awayImage: '/images/jamsil.jpeg' },
-  { id: 'gocheok', name: '고척돔', location: '서울 - 키움', city: '서울', team: '키움', homeImage: '/images/gocheok(1).jpg', awayImage: '/images/gocheok.jpeg' },
-  { id: 'wizpark', name: '위즈 파크', location: '수원 - KT', city: '수원', team: 'KT', homeImage: '/images/wizpark(1).jpg', awayImage: '/images/wizpark.jpeg' },
-  { id: 'munhak', name: '문학 구장', location: '인천 - SSG', city: '인천', team: 'SSG', homeImage: '/images/ssg(1).jpg', awayImage: '/images/ssg.jpeg' },
-  { id: 'lionspark', name: '라이온즈 파크', location: '대구 - 삼성', city: '대구', team: '삼성', homeImage: '/images/lionspark(1).jpg', awayImage: '/images/lionspark.jpeg' },
-  { id: 'ballpark', name: '볼 파크', location: '대전 - 한화', city: '대전', team: '한화', homeImage: '/images/hanwha(1).jpg', awayImage: '/images/hanwha.jpeg' },
-  { id: 'champions', name: '챔피언스필드', location: '광주 - 기아', city: '광주', team: '기아', homeImage: '/images/champions(1).jpg', awayImage: '/images/champions.jpeg' },
-  { id: 'ncpark', name: '엔씨 파크', location: '창원 - NC', city: '창원', team: 'NC', homeImage: '/images/ncpark(1).jpg', awayImage: '/images/ncpark.jpeg' },
+  { id: 'sajik', name: '사직구장', location: '부산 - 롯데', city: '부산', team: '롯데', keywords: 'lotte giants 롯데 자이언츠 사직 giants', homeImage: '/images/sajik(1).jpg', awayImage: '/images/sajik.jpeg' },
+  { id: 'jamsil', name: '잠실구장', location: '서울 - LG/두산', city: '서울', team: 'LG/두산', keywords: 'lg twins lgtwins doosan bears 두산 베어스 엘지 트윈스 jamsil 잠실 bears twins', homeImage: '/images/jamsil(1).jpeg', awayImage: '/images/jamsil.jpeg' },
+  { id: 'gocheok', name: '고척돔', location: '서울 - 키움', city: '서울', team: '키움', keywords: 'kiwoom heroes 키움 히어로즈 고척돔 gocheok dome heroes', homeImage: '/images/gocheok(1).jpg', awayImage: '/images/gocheok.jpeg' },
+  { id: 'wizpark', name: '위즈 파크', location: '수원 - KT', city: '수원', team: 'KT', keywords: 'kt wiz 케이티 위즈 wizpark 위즈파크 수원 wiz', homeImage: '/images/wizpark(1).jpg', awayImage: '/images/wizpark.jpeg' },
+  { id: 'munhak', name: '문학 구장', location: '인천 - SSG', city: '인천', team: 'SSG', keywords: 'ssg landers ssglanders 쓱 에스에스지 랜더스 문학 인천 munhak landers', homeImage: '/images/ssg(1).jpg', awayImage: '/images/ssg.jpeg' },
+  { id: 'lionspark', name: '라이온즈 파크', location: '대구 - 삼성', city: '대구', team: '삼성', keywords: 'samsung lions 삼성 라이온즈 라팍 lionspark 대구 lions', homeImage: '/images/lionspark(1).jpg', awayImage: '/images/lionspark.jpeg' },
+  { id: 'ballpark', name: '볼 파크', location: '대전 - 한화', city: '대전', team: '한화', keywords: 'hanwha eagles 한화 이글스 대전 한밭 eagles ballpark', homeImage: '/images/hanwha(1).jpg', awayImage: '/images/hanwha.jpeg' },
+  { id: 'champions', name: '챔피언스필드', location: '광주 - 기아', city: '광주', team: '기아', keywords: 'kia tigers kia 기아 타이거즈 광주 챔필 champions field tigers', homeImage: '/images/champions(1).jpg', awayImage: '/images/champions.jpeg' },
+  { id: 'ncpark', name: '엔씨 파크', location: '창원 - NC', city: '창원', team: 'NC', keywords: 'nc dinos nc 엔씨 다이노스 창원 ncpark 엔팍 dinos', homeImage: '/images/ncpark(1).jpg', awayImage: '/images/ncpark.jpeg' },
 ];
 
 export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
@@ -30,14 +30,18 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
   const filteredStadiums = STADIUMS.filter(s => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return true;
-    return s.name.toLowerCase().includes(q) || s.location.toLowerCase().includes(q);
+    return (
+      s.name.toLowerCase().includes(q) || 
+      s.location.toLowerCase().includes(q) ||
+      (s.keywords && s.keywords.toLowerCase().includes(q))
+    );
   });
 
   return (
     <div className="main-layout" style={{ background: '#FFFFFF', fontFamily: 'Inter, sans-serif' }}>
       {/* Top Header */}
       <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF' }}>
-        <Menu className="menu-icon" style={{ cursor: 'pointer', color: '#555555' }} />
+        <Menu className="menu-icon" style={{ cursor: 'pointer', color: '#555555' }} onClick={() => onNavigate(17, { tab: 'extra' })} />
         <div className="logo-text" style={{ fontStyle: 'normal', fontWeight: '800' }}>stadium pulse</div>
         <div 
           className={`my-team-badge ${activeTeam}`} 
@@ -248,15 +252,12 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
       <div className="bottom-nav" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 70, borderTop: '1px solid #EAEAEA', background: '#FFFFFF', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 30 }}>
         <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>홈</span>
         </div>
         <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>Where to Go?</span>
         </div>
         <div className="nav-item" onClick={() => onNavigate(17)}>
           <User size={24} />
-          <span>마이</span>
         </div>
       </div>
     </div>

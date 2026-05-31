@@ -101,15 +101,12 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam, onNavi
       <div className="bottom-nav">
         <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>홈</span>
         </div>
         <div className="nav-item active" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>Where to Go?</span>
         </div>
         <div className="nav-item" onClick={() => onNavigate(17)}>
           <User size={24} />
-          <span>마이</span>
         </div>
       </div>
     </div>

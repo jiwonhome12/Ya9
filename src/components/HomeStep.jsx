@@ -384,7 +384,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
   return (
     <div className="main-layout">
       {/* Top Header */}
-      <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF' }}>
+      <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF', padding: '8px 16px' }}>
         <Menu 
           className="menu-icon" 
           style={{ cursor: 'pointer', color: '#555555' }} 
@@ -401,23 +401,23 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
       </div>
 
       {/* Main Content Dashboard */}
-      <div className="main-content scrollable" style={{ background: '#FAFAFA', padding: '16px' }}>
+      <div className="main-content scrollable" style={{ background: '#FAFAFA', padding: '8px', paddingBottom: '80px', overflowY: 'auto', flex: 1 }}>
         
         {/* Dynamic Logo Title */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '12px 0 20px' }}>
-          <h2 style={{ fontSize: '42px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-1.5px', textTransform: 'uppercase', color: 'var(--primary-color)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '2px 0 4px' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-1px', textTransform: 'uppercase', color: 'var(--primary-color)', margin: 0 }}>
             {activeTeam}
           </h2>
-          <span style={{ fontSize: '12px', fontWeight: '800', color: '#888888', letterSpacing: '2px', textTransform: 'uppercase', marginTop: '2px' }}>
+          <span style={{ fontSize: '9px', fontWeight: '800', color: '#888888', letterSpacing: '0.5px', textTransform: 'uppercase', marginTop: '1px' }}>
             {teamDetails.name}
           </span>
         </div>
 
         {/* season Stats Donut Widget */}
-        <div style={{ background: '#FFFFFF', padding: '16px', borderRadius: '20px', border: '1px solid #EAEAEA', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {/* SVG Donut */}
-            <div style={{ position: 'relative', width: '64px', height: '64px' }}>
+        <div style={{ background: '#FFFFFF', padding: '6px 10px', borderRadius: '14px', border: '1px solid #EAEAEA', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* SVG Donut */}
+              <div style={{ position: 'relative', width: '40px', height: '40px' }}>
               <svg style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }} viewBox="0 0 36 36">
                 <path
                   stroke="#F2F2F2"
@@ -435,33 +435,33 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
                 />
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: '13px', fontWeight: '800', color: '#333333' }}>{(teamDetails.winRate * 100).toFixed(0)}%</span>
+                <span style={{ fontSize: '11px', fontWeight: '800', color: '#333333' }}>{(teamDetails.winRate * 100).toFixed(0)}%</span>
               </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '18px', fontWeight: '800', color: '#111111' }}>시즌 {teamDetails.rank}위</span>
-              <span style={{ fontSize: '11px', color: '#888888', fontWeight: '600', marginTop: '2px' }}>
+              <span style={{ fontSize: '12px', fontWeight: '800', color: '#111111' }}>시즌 {teamDetails.rank}위</span>
+              <span style={{ fontSize: '8px', color: '#888888', fontWeight: '600', marginTop: '0.5px' }}>
                 승률 .{(teamDetails.winRate * 1000).toFixed(0)} | {teamDetails.wins}승 {teamDetails.losses}패
               </span>
             </div>
           </div>
 
           {/* Recent 5 matches win rate dots */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', borderLeft: '1px solid #EEEEEE', paddingLeft: '16px' }}>
-            <span style={{ fontSize: '9px', fontWeight: '800', color: '#888888', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>최근 5경기 전적</span>
-            <div style={{ display: 'flex', gap: '4px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', borderLeft: '1px solid #EEEEEE', paddingLeft: '10px' }}>
+            <span style={{ fontSize: '8px', fontWeight: '800', color: '#888888', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>최근 5경기 전적</span>
+            <div style={{ display: 'flex', gap: '3px' }}>
               {teamDetails.recent.map((r, i) => (
                 <span
                   key={i}
                   style={{
-                    width: '24px',
-                    height: '24px',
+                    width: '18px',
+                    height: '18px',
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '11px',
+                    fontSize: '9px',
                     fontWeight: '800',
                     color: '#FFFFFF',
                     background: r === 'W' ? '#E1002A' : '#0066B3'
@@ -475,7 +475,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
         </div>
 
         {/* 2026 Season Calendar */}
-        <div style={{ position: 'relative', background: '#FFFFFF', padding: '16px', borderRadius: '20px', border: '1px solid #EAEAEA', marginBottom: '20px', boxShadow: '0 4px 10px rgba(0,0,0,0.02)', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', background: '#FFFFFF', padding: '6px 6px 8px', borderRadius: '16px', border: '1px solid #EAEAEA', marginBottom: '4px', boxShadow: '0 2px 6px rgba(0,0,0,0.02)', overflow: 'hidden' }}>
           
           {/* CSS Animation Keyframes */}
           <style>{`
@@ -519,10 +519,10 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center', 
-            padding: '6px 12px', 
+            padding: '2px 6px', 
             background: isSynced ? '#FFF1F2' : '#F0FDF4', 
-            borderRadius: '10px', 
-            marginBottom: '12px',
+            borderRadius: '8px', 
+            marginBottom: '4px',
             border: isSynced ? '1px solid #FFE4E6' : '1px solid #DCFCE7'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -542,12 +542,12 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
                   animation: 'syncPing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite'
                 }}></span>
               </span>
-              <span style={{ fontSize: '11px', fontWeight: '800', color: isSynced ? '#BE123C' : '#15803D' }}>
+              <span style={{ fontSize: '9px', fontWeight: '800', color: isSynced ? '#BE123C' : '#15803D' }}>
                 {isSyncing 
-                  ? '구글 야구 실시간 동기화 중...' 
+                  ? '동기화 중...' 
                   : isSynced 
-                    ? 'Google 연동: 오늘 경기 우천 취소 반영됨' 
-                    : 'Google 야구 연동: 실시간 일정 수신 중'}
+                    ? 'Google 연동됨' 
+                    : 'Google 연동 중'}
               </span>
             </div>
 
@@ -575,16 +575,16 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
           </div>
 
           {/* Calendar Header with Interactive Season Selector & Prev/Next Month Slider */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', gap: '6px' }}>
             {/* Season (Year) Selector */}
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
               style={{
-                padding: '6px 12px',
-                borderRadius: '10px',
+                padding: '4px 8px',
+                borderRadius: '8px',
                 border: '1px solid #EAEAEA',
-                fontSize: '13px',
+                fontSize: '11px',
                 fontWeight: '800',
                 color: '#333333',
                 backgroundColor: '#FFFFFF',
@@ -599,15 +599,15 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
             </select>
 
             {/* Bidirectional Month Slider */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
               <button
                 onClick={handlePrevMonth}
                 style={{
                   background: '#F5F5F5',
                   border: 'none',
                   borderRadius: '50%',
-                  width: '28px',
-                  height: '28px',
+                  width: '24px',
+                  height: '24px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -615,17 +615,17 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
                   color: '#555555'
                 }}
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={14} />
               </button>
 
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
                 style={{
-                  padding: '6px 8px',
-                  borderRadius: '10px',
+                  padding: '4px 6px',
+                  borderRadius: '8px',
                   border: 'none',
-                  fontSize: '14px',
+                  fontSize: '12px',
                   fontWeight: '900',
                   color: 'var(--primary-color)',
                   backgroundColor: 'transparent',
@@ -645,8 +645,8 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
                   background: '#F5F5F5',
                   border: 'none',
                   borderRadius: '50%',
-                  width: '28px',
-                  height: '28px',
+                  width: '24px',
+                  height: '24px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -654,21 +654,21 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
                   color: '#555555'
                 }}
               >
-                <ChevronRight size={16} />
+                <ChevronRight size={14} />
               </button>
             </div>
 
             {/* Naver Sports API Connection Badge */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F0FDF4', padding: '4px 8px', borderRadius: '8px', border: '1px solid #DCFCE7' }}>
-              <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#22C55E' }}></span>
-              <span style={{ fontSize: '9px', fontWeight: '800', color: '#16A34A' }}>Naver API</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', background: '#F0FDF4', padding: '3px 6px', borderRadius: '6px', border: '1px solid #DCFCE7' }}>
+              <span style={{ width: '3px', height: '3px', borderRadius: '50%', background: '#22C55E' }}></span>
+              <span style={{ fontSize: '8px', fontWeight: '800', color: '#16A34A' }}>Naver</span>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '10px 4px', textAlign: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px 1px', textAlign: 'center' }}>
             {/* Week days */}
             {['일', '월', '화', '수', '목', '금', '토'].map((w, i) => (
-              <span key={i} style={{ fontSize: '11px', fontWeight: '800', color: '#999999', paddingBottom: '4px' }}>{w}</span>
+              <span key={i} style={{ fontSize: '8.5px', fontWeight: '800', color: '#999999', paddingBottom: '1px' }}>{w}</span>
             ))}
 
             {/* Empty starts dynamically calculated */}
@@ -683,41 +683,42 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
                 <div
                   key={i}
                   style={{
-                    padding: '6px 0',
-                    borderRadius: '8px',
+                    padding: '1px 0',
+                    borderRadius: '4px',
                     background: isToday ? 'var(--primary-color)' : 'transparent',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    minHeight: '48px',
+                    minHeight: '22px',
                     position: 'relative'
                   }}
                 >
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: isToday ? '#FFFFFF' : '#333333' }}>
+                  <span style={{ fontSize: '8px', fontWeight: '800', color: isToday ? '#FFFFFF' : '#333333', lineHeight: '1' }}>
                     {isToday ? '오늘' : c.day}
                   </span>
                   {c.opponentKey && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '3px', gap: '1px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '1px', gap: '1px' }}>
                       <img 
                         src={TEAM_LOGO_IMAGES[c.opponentKey] || `/images/logos/lotte.svg`} 
                         alt={c.opponent} 
                         style={{ 
-                          width: '15px', 
-                          height: '15px', 
+                          width: '10px', 
+                          height: '10px', 
                           objectFit: 'contain',
                           filter: isToday ? 'brightness(1.2)' : 'none'
                         }}
                       />
                       <span
                         style={{
-                          fontSize: '7px',
+                          fontSize: '5.5px',
                           fontWeight: '950',
                           color: '#FFFFFF',
                           background: c.result === 'W' ? '#E1002A' : c.result === 'L' ? '#0066B3' : c.result === 'C' ? '#E11D48' : '#777777',
-                          padding: '1px 2px',
-                          borderRadius: '3px',
-                          transform: 'scale(0.85)'
+                          padding: '0 1px',
+                          borderRadius: '1.5px',
+                          transform: 'scale(0.85)',
+                          transformOrigin: 'center'
                         }}
                       >
                         {c.result === 'W' ? '승' : c.result === 'L' ? '패' : c.result === 'C' ? '우취' : '예'}
@@ -731,7 +732,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
         </div>
 
         {/* Future Matches */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '6px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#333333' }}>남은 경기</h3>
             <span 
@@ -788,7 +789,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
         </div>
 
         {/* Past matches */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '6px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#333333' }}>지난 경기</h3>
             <span 
@@ -849,7 +850,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
         </div>
 
         {/* Video Highlights */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '6px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#333333' }}>하이라이트 보기</h3>
             <span 
@@ -895,15 +896,12 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
       <div className="bottom-nav">
         <div className="nav-item active" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>홈</span>
         </div>
         <div className="nav-item" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>Where to Go?</span>
         </div>
         <div className="nav-item" onClick={() => onNavigate(17)}>
           <User size={24} />
-          <span>마이</span>
         </div>
       </div>
     </div>

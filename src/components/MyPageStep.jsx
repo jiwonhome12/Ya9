@@ -126,7 +126,7 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
   return (
     <div className="main-layout" style={{ background: '#FFFFFF', fontFamily: 'Inter, sans-serif' }}>
       {/* Top Header */}
-      <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+      <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
         {activeTab === 'extra' ? (
           <button 
             onClick={() => onNavigate(16)} 
@@ -694,15 +694,12 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
       <div className="bottom-nav" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 70, borderTop: '1px solid #EAEAEA', background: '#FFFFFF', display: 'flex', justify: 'space-around', items: 'center', zIndex: 30 }}>
         <div className="nav-item" onClick={() => onNavigate(16)}>
           <Home size={24} />
-          <span>홈</span>
         </div>
         <div className="nav-item" onClick={() => onNavigate(4)}>
           <MapPin size={24} />
-          <span>Where to Go?</span>
         </div>
         <div className="nav-item active" onClick={() => onNavigate(17)}>
           <User size={24} />
-          <span>마이</span>
         </div>
       </div>
     </div>

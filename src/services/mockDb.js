@@ -165,7 +165,7 @@ export const mockDbService = {
     db.blogs = getOrSeed(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
     return db.blogs;
   },
-  addBlogEntry: (mode, title, desc, author) => {
+  addBlogEntry: (mode, title, desc, author, image = '', stadium = '') => {
     db.blogs = getOrSeed(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
     const newBlog = {
       id: 'b_' + Date.now(),
@@ -173,7 +173,9 @@ export const mockDbService = {
       title,
       desc,
       author: author || '나(Me)',
-      date: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\s/g, '').slice(0, -1)
+      date: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\s/g, '').slice(0, -1),
+      image,
+      stadium
     };
     db.blogs.push(newBlog);
     saveDb(STORAGE_KEYS.BLOGS, db.blogs);

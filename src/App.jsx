@@ -66,6 +66,7 @@ const INITIAL_FEED = [
 ];
 
 function App() {
+  // Development mode: start at home step directly
   const [step, setStep] = useState(1);
   const [selectedTeam, setSelectedTeam] = useState(() => {
     const profile = mockDbService.getUserProfile();
@@ -85,6 +86,7 @@ function App() {
     const stored = localStorage.getItem('bmw_saved_blogs');
     return stored ? JSON.parse(stored) : [];
   });
+  const [selectedBlogId, setSelectedBlogId] = useState(null);
 
   const [myPageTab, setMyPageTab] = useState('diary');
 
@@ -171,6 +173,9 @@ function App() {
     if (newStep === 17) {
       setMyPageTab(params?.tab || 'diary');
     }
+    if (params?.blogId) {
+      setSelectedBlogId(params.blogId);
+    }
     setStep(newStep);
   };
 
@@ -185,11 +190,11 @@ function App() {
       
       {step === 6 && <CheeringInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} />}
       {step === 7 && <FoodInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} />}
-
+ 
       {step === 8 && <CheeringSeatInfoStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} />}
-      {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} />}
+      {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} />}
       {step === 10 && <FoodDetailStep stadium={selectedStadium} mode={foodDetailMode} onBack={goBack} onNavigate={navigateTo} savedFoods={savedFoods} onToggleFood={toggleSaveFood} />}
-      {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} />}
+      {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} />}
 
       {step === 12 && <MessageListStep onBack={goBack} onNavigate={navigateTo} />}
       {step === 13 && <ChatRoomStep onBack={goBack} onNavigate={navigateTo} />}
