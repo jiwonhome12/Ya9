@@ -658,6 +658,28 @@ export const mockDbService = {
     saveDb(STORAGE_KEYS.BLOGS, db.blogs);
     return newBlog;
   },
+  updateBlogEntry: (id, title, desc, image = undefined, stadium = undefined) => {
+    db.blogs = getOrSeed(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
+    const index = db.blogs.findIndex(b => b.id === id);
+    if (index !== -1) {
+      db.blogs[index] = {
+        ...db.blogs[index],
+        title,
+        desc,
+        image: image !== undefined ? image : db.blogs[index].image,
+        stadium: stadium !== undefined ? stadium : db.blogs[index].stadium
+      };
+      saveDb(STORAGE_KEYS.BLOGS, db.blogs);
+      return db.blogs[index];
+    }
+    return null;
+  },
+  deleteBlogEntry: (id) => {
+    db.blogs = getOrSeed(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
+    db.blogs = db.blogs.filter(b => b.id !== id);
+    saveDb(STORAGE_KEYS.BLOGS, db.blogs);
+    return db.blogs;
+  },
   getDiary: () => {
     db.diary = getOrSeed(STORAGE_KEYS.DIARY, INITIAL_DIARY);
     return db.diary.sort((a, b) => new Date(b.date) - new Date(a.date));

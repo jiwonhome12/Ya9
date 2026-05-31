@@ -38,7 +38,7 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
   });
 
   return (
-    <div className="main-layout" style={{ background: '#FFFFFF', fontFamily: 'Inter, sans-serif' }}>
+    <div className="main-layout" style={{ background: '#FFFFFF', fontFamily: 'Inter, sans-serif', position: 'relative', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Top Header */}
       <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF' }}>
         <Menu className="menu-icon" style={{ cursor: 'pointer', color: '#555555' }} onClick={() => onNavigate(17, { tab: 'extra' })} />
@@ -53,7 +53,7 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
       </div>
 
       {/* Main Container */}
-      <div className="main-content scrollable" style={{ background: '#FAFAFA', padding: '16px', paddingBottom: '90px' }}>
+      <div className="main-content scrollable" style={{ background: '#FAFAFA', padding: '16px', paddingBottom: '110px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column' }}>
         
         {/* Title and Home/Away Switcher (5.png) */}
         <div className="stadium-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '8px 0 16px' }}>
@@ -208,7 +208,7 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
         </div>
 
         {/* Back and Next buttons */}
-        <div className="action-buttons-row" style={{ display: 'flex', gap: '10px' }}>
+        <div className="action-buttons-row" style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexShrink: 0 }}>
           <button 
             className="skip-btn" 
             onClick={() => onNavigate(16)} // Goes back to Home step 16

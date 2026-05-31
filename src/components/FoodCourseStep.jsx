@@ -11,10 +11,13 @@ const FRIENDS_LIST = [
 ];
 
 export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], onToggleBlog, blogId }) {
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDesc, setEditDesc] = useState('');
+  const [editStadium, setEditStadium] = useState('');
+  const [editImage, setEditImage] = useState('');
 
-  const blogs = mockDbService.getBlogs();
+  const [blogs, setBlogs] = useState(() => mockDbService.getBlogs());
   const blog = blogs.find(b => b.id === blogId) || blogs.find(b => b.mode === 'food') || {
     id: 'b3',
     title: 'oo야구장 먹거리 리스트 - 2026 신상 맛집 완벽 정리! 🍢',
@@ -23,13 +26,40 @@ export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], on
     date: '2026.05.21'
   };
 
-  const handleShare = () => {
-    if (selectedFriend) {
-      alert(`${selectedFriend.name}님에게 링크가 공유되었습니다.`);
-      setShowShareModal(false);
-      onNavigate(13); // ChatRoomStep으로 이동
-    } else {
-      alert('공유할 친구를 선택해주세요.');
+  const handleStartEdit = () => {
+    setEditTitle(blog.title);
+    setEditDesc(blog.desc);
+    setEditStadium(blog.stadium || '');
+    setEditImage(blog.image || '');
+    setShowEditModal(true);
+  };
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    if (editTitle && editDesc) {
+      mockDbService.updateBlogEntry(blog.id, editTitle, editDesc, editImage, editStadium);
+      setBlogs(mockDbService.getBlogs());
+      setShowEditModal(false);
+      alert('추천글이 성공적으로 수정되었습니다! ✍️');
+    }
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('정말로 이 추천글을 삭제하시겠습니까? 🗑️')) {
+      mockDbService.deleteBlogEntry(blog.id);
+      alert('추천글이 삭제되었습니다.');
+      onBack();
+    }
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditImage(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
   return (
@@ -49,11 +79,6 @@ export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], on
               fill={savedBlogs.includes(blog.id) ? 'var(--primary-color)' : 'none'} 
             />
           </button>
-          <Share2 
-            className="share-icon" 
-            onClick={() => setShowShareModal(true)} 
-            style={{ cursor: 'pointer', color: '#333' }} 
-          />
         </div>
       </div>
 
@@ -68,6 +93,42 @@ export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], on
             )}
           </div>
           <p style={{ fontSize: '12px', color: '#888888', margin: 0, fontWeight: '700', textAlign: 'left' }}>by {blog.author} | {blog.date}</p>
+          
+          {blog.id.startsWith('b_') && (
+            <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+              <button 
+                onClick={handleStartEdit}
+                style={{
+                  padding: '5px 12px',
+                  backgroundColor: '#F3F4F6',
+                  color: '#4B5563',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  cursor: 'pointer'
+                }}
+              >
+                ✏️ 수정하기
+              </button>
+              <button 
+                onClick={handleDelete}
+                style={{
+                  padding: '5px 12px',
+                  backgroundColor: '#FEE2E2',
+                  color: '#EF4444',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '11px',
+                  fontWeight: '800',
+                  cursor: 'pointer'
+                }}
+              >
+                🗑️ 삭제하기
+              </button>
+            </div>
+          )}
+          
           <h2 className="blog-subtitle" style={{ fontSize: '14px', color: '#666666', marginTop: '10px', fontWeight: '600', borderLeft: '3px solid var(--primary-color)', paddingLeft: '8px', textAlign: 'left' }}>{blog.desc}</h2>
         </div>
 
@@ -197,42 +258,75 @@ export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], on
         )}
       </div>
 
-      {/* Share Modal */}
-      {showShareModal && (
+      {/* Edit Modal */}
+      {showEditModal && (
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
-          <div style={{ backgroundColor: 'white', width: '100%', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '24px', paddingBottom: '40px', position: 'relative' }}>
+          <div style={{ backgroundColor: 'white', width: '100%', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '24px', paddingBottom: '40px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <X 
               size={24} 
               color="#888" 
               style={{ position: 'absolute', top: '24px', right: '24px', cursor: 'pointer' }} 
-              onClick={() => setShowShareModal(false)} 
+              onClick={() => setShowEditModal(false)} 
             />
-            <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px' }}>채팅방으로 공유하기</h3>
+            <h3 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '16px', color: '#111111' }}>추천 코스 글 수정하기 ✍️</h3>
             
-            <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '24px' }}>
-              {FRIENDS_LIST.map(friend => (
-                <div 
-                  key={friend.id} 
-                  onClick={() => setSelectedFriend(friend)}
-                  style={{ display: 'flex', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }}
-                >
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#E0E0E0', marginRight: '16px' }}></div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{friend.name}</div>
-                    <div style={{ fontSize: '12px', color: '#888' }}>{friend.handle}</div>
-                  </div>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: selectedFriend?.id === friend.id ? 'none' : '1px solid #ccc', backgroundColor: selectedFriend?.id === friend.id ? '#6C43EB' : 'transparent', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    {selectedFriend?.id === friend.id && <Check size={16} color="white" />}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <form onSubmit={handleEditSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: '800', color: '#666666', display: 'block', marginBottom: '4px' }}>제목</label>
+                <input 
+                  type="text" 
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="제목을 입력해주세요"
+                  required
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #EAEAEA', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
 
-            <button 
-              onClick={handleShare}
-              style={{ width: '100%', padding: '16px', backgroundColor: selectedFriend ? '#6C43EB' : '#ccc', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 'bold', cursor: selectedFriend ? 'pointer' : 'not-allowed' }}>
-              공유하기
-            </button>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: '800', color: '#666666', display: 'block', marginBottom: '4px' }}>구장명</label>
+                <input 
+                  type="text" 
+                  value={editStadium}
+                  onChange={(e) => setEditStadium(e.target.value)}
+                  placeholder="예: 사직구장"
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #EAEAEA', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: '800', color: '#666666', display: 'block', marginBottom: '4px' }}>내용</label>
+                <textarea 
+                  value={editDesc}
+                  onChange={(e) => setEditDesc(e.target.value)}
+                  placeholder="내용을 자세히 작성해주세요"
+                  rows={4}
+                  required
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #EAEAEA', fontSize: '13px', outline: 'none', resize: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: '800', color: '#666666', display: 'block', marginBottom: '4px' }}>사진 첨부 (선택)</label>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ fontSize: '12px', color: '#666666' }}
+                />
+                {editImage && (
+                  <div style={{ marginTop: '8px', width: '60px', height: '60px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #EAEAEA' }}>
+                    <img src={editImage} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                )}
+              </div>
+
+              <button 
+                type="submit"
+                style={{ width: '100%', padding: '14px', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px' }}>
+                저장하기
+              </button>
+            </form>
           </div>
         </div>
       )}
