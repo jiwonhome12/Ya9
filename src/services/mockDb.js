@@ -553,10 +553,13 @@ const getOrSeed = (key, initialData) => {
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      // Auto-update if the new initial data has a different number of items (such as our aligned stadium lists)
-      if (Array.isArray(parsed) && Array.isArray(initialData) && parsed.length !== initialData.length) {
-        localStorage.setItem(key, JSON.stringify(initialData));
-        return initialData;
+      // Only reset/upgrade if the user's database contains old stadium IDs ('daegu') or has fewer items than our expanded initial list
+      if (Array.isArray(parsed) && Array.isArray(initialData)) {
+        const hasOldId = parsed.some(item => item.stadiumId === 'daegu');
+        if (parsed.length < initialData.length || hasOldId) {
+          localStorage.setItem(key, JSON.stringify(initialData));
+          return initialData;
+        }
       }
       return parsed;
     } catch (e) {

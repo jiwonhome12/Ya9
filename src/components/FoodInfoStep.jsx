@@ -136,7 +136,8 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
 
             return displayFoods.slice(0, 2).map((food, idx) => {
               const isActive = idx === 0; // First item is highlighted active as per mockup
-              const descPoints = food.desc.split(/[!|.]/).filter(p => p.trim() !== '');
+              const rawPoints = food.desc ? food.desc.split(/[!.]/).filter(p => p.trim() !== '') : [];
+              const descPoints = rawPoints.length > 0 ? rawPoints : [food.desc || ''];
 
               return (
                 <div 
@@ -162,13 +163,13 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
                   {/* Food/Store Info */}
                   <div style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '850', color: '#111' }}>{food.name}</h4>
+                      <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '850', color: '#111', wordBreak: 'break-all' }}>{food.name}</h4>
                       <span style={{ fontSize: '14px', fontWeight: '850', color: 'var(--primary-color)' }}>
                         ₩{food.price.toLocaleString()}
                       </span>
                     </div>
                     
-                    <ul style={{ listStyleType: 'disc', paddingLeft: '16px', margin: '8px 0 0 0', fontSize: '11.5px', color: '#666', lineHeight: '1.5' }}>
+                    <ul style={{ listStyleType: 'disc', paddingLeft: '16px', margin: '8px 0 0 0', fontSize: '11.5px', color: '#666', lineHeight: '1.5', wordBreak: 'break-all' }}>
                       {descPoints.slice(0, 2).map((point, pIdx) => (
                         <li key={pIdx}>{point.trim()}</li>
                       ))}

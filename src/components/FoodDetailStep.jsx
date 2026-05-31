@@ -146,7 +146,7 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
           />
         </div>
 
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: '20px 20px 90px 20px' }}>
           {/* Store Info Header */}
           <div className="store-detail-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
