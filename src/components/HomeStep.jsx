@@ -235,7 +235,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
   // Compile calendar days dynamically
   const calendarDays = [];
   for (let d = 1; d <= daysInMonth; d++) {
-    const match = getMatchForDay(d);
+    const match = isOffseason ? null : getMatchForDay(d);
     if (match === null) {
       calendarDays.push({ day: d, empty: true });
     } else {
@@ -306,7 +306,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
     const startSearchDay = isCurrentCalendarMonth ? realDate - 1 : daysInMonth;
     for (let d = startSearchDay; d >= 1; d--) {
       const m = getMatchForDay(d);
-      if (m !== null) {
+      if (m !== null && m.score !== null) {
         pastMatch = m;
         break;
       }
@@ -471,6 +471,95 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
                 </span>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* KBO Standings Widget */}
+        <div 
+          onClick={() => window.open('https://m.sports.naver.com/kbaseball/record/index', '_blank')}
+          style={{
+            background: '#FFFFFF',
+            padding: '12px 14px',
+            borderRadius: '16px',
+            border: '1px solid #EAEAEA',
+            marginBottom: '4px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.01)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '13px', fontWeight: '850', color: '#111111', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              🏆 2026 KBO 리그 실시간 순위
+            </span>
+            <span style={{ fontSize: '10px', color: '#888888', fontWeight: '700', display: 'flex', alignItems: 'center' }}>
+              전체보기 <ChevronRight size={12} />
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {Object.entries(TEAM_INFO)
+              .map(([key, value]) => ({ key, ...value }))
+              .sort((a, b) => a.rank - b.rank)
+              .map((team, idx) => {
+                const isMyTeam = team.key === activeTeam;
+                return (
+                  <div 
+                    key={team.key}
+                    style={{
+                      flex: '0 0 auto',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      background: isMyTeam ? 'var(--primary-color)' : '#F8F9FA',
+                      padding: '8px 10px',
+                      borderRadius: '10px',
+                      minWidth: '58px',
+                      border: isMyTeam ? 'none' : '1px solid #EEEEEE',
+                      boxShadow: isMyTeam ? '0 3px 6px rgba(0,0,0,0.1)' : 'none',
+                      position: 'relative'
+                    }}
+                  >
+                    <span style={{ 
+                      fontSize: '9px', 
+                      fontWeight: '800', 
+                      color: isMyTeam ? '#FFFFFF' : '#888888',
+                      marginBottom: '2px'
+                    }}>
+                      {team.rank}위
+                    </span>
+                    <img 
+                      src={TEAM_LOGO_IMAGES[team.key] || `/images/logos/lotte.svg`}
+                      alt={team.name}
+                      style={{ 
+                        width: '20px', 
+                        height: '20px', 
+                        objectFit: 'contain',
+                        filter: isMyTeam ? 'brightness(1.5) contrast(1.5)' : 'none',
+                        marginBottom: '4px'
+                      }}
+                    />
+                    <span style={{ 
+                      fontSize: '10.5px', 
+                      fontWeight: '900', 
+                      color: isMyTeam ? '#FFFFFF' : '#333333',
+                      letterSpacing: '-0.3px'
+                    }}>
+                      {team.name.split(' ')[1]}
+                    </span>
+                    <span style={{ 
+                      fontSize: '8px', 
+                      fontWeight: '600', 
+                      color: isMyTeam ? 'rgba(255,255,255,0.8)' : '#777777',
+                      marginTop: '1px'
+                    }}>
+                      .{Math.round(team.winRate * 1000)}
+                    </span>
+                  </div>
+                );
+              })}
           </div>
         </div>
 
