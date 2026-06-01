@@ -3,9 +3,10 @@ import { User } from 'lucide-react';
 import { mockDbService } from '../services/mockDb';
 
 export default function ProfileStep({ onNext }) {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [profileImg, setProfileImg] = useState(null);
+  const profile = mockDbService.getUserProfile();
+  const [name, setName] = useState(profile ? profile.name : '');
+  const [description, setDescription] = useState(profile ? profile.bio : '');
+  const [profileImg, setProfileImg] = useState(profile ? profile.avatar : null);
   const fileInputRef = useRef(null);
 
   const handleImgChange = (e) => {

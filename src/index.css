@@ -151,7 +151,22 @@ body {
 
 .social-btn.kakao { background-color: #FEE500; color: #391B1B; }
 .social-btn.naver { background-color: #03C75A; color: white; }
-.social-btn.google { background-color: #FFFFFF; border: 1px solid #E0E0E0; }
+
+.social-btn.google-custom {
+  background-color: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.google-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 .profile-img-container {
   display: flex;

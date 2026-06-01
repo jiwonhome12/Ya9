@@ -43,12 +43,16 @@ const SHOP_URLS = {
 export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }) {
   const homeTeams = stadium ? STADIUM_TO_TEAM[stadium.id] : ['lg', 'doosan'];
 
-  const [blogsList, setBlogsList] = useState(() => mockDbService.getBlogs().filter(b => b.mode === 'cheering'));
+  const [blogsList, setBlogsList] = useState(() => {
+    const allBlogs = mockDbService.getBlogs().filter(b => b.mode === 'cheering');
+    if (!stadium) return allBlogs;
+    return allBlogs.filter(b => !b.stadium || b.stadium.includes(stadium.name) || stadium.name.includes(b.stadium));
+  });
   const [showWriteModal, setShowWriteModal] = useState(false);
   const [writeTitle, setWriteTitle] = useState('');
   const [writeDesc, setWriteDesc] = useState('');
   const [writeImage, setWriteImage] = useState('');
-  const [writeStadium, setWriteStadium] = useState('');
+  const [writeStadium, setWriteStadium] = useState(stadium ? stadium.name : '');
   const [activeField, setActiveField] = useState('title'); // 'title' or 'desc'
 
   const handleImageChange = (e) => {
@@ -75,12 +79,13 @@ export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }
     if (writeTitle && writeDesc) {
       const profile = mockDbService.getUserProfile();
       mockDbService.addBlogEntry('cheering', writeTitle, writeDesc, profile.name, writeImage, writeStadium);
-      setBlogsList(mockDbService.getBlogs().filter(b => b.mode === 'cheering'));
+      const allBlogs = mockDbService.getBlogs().filter(b => b.mode === 'cheering');
+      setBlogsList(stadium ? allBlogs.filter(b => !b.stadium || b.stadium.includes(stadium.name) || stadium.name.includes(b.stadium)) : allBlogs);
       alert('블로그 추천 코스가 등록되었습니다! 🎉');
       setWriteTitle('');
       setWriteDesc('');
       setWriteImage('');
-      setWriteStadium('');
+      setWriteStadium(stadium ? stadium.name : '');
       setShowWriteModal(false);
     }
   };

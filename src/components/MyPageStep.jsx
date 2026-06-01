@@ -179,7 +179,7 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
           </div>
         </div>
 
-        {/* Navigation Tabs (2 tabs now when not in extra screen) */}
+        {/* Navigation Tabs (3 tabs now when not in extra screen) */}
         {activeTab !== 'extra' && (
           <div style={{ display: 'flex', borderBottom: '1px solid #EAEAEA', marginBottom: '16px' }}>
             <button
@@ -188,7 +188,7 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
                 flex: 1,
                 padding: '12px 0',
                 textAlign: 'center',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: '800',
                 background: 'none',
                 border: 'none',
@@ -206,7 +206,7 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
                 flex: 1,
                 padding: '12px 0',
                 textAlign: 'center',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: '800',
                 background: 'none',
                 border: 'none',
@@ -216,7 +216,25 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
                 transition: 'all 0.2s'
               }}
             >
-              저장 목록 탭
+              저장 목록
+            </button>
+            <button
+              onClick={() => setActiveTab('reviews')}
+              style={{
+                flex: 1,
+                padding: '12px 0',
+                textAlign: 'center',
+                fontSize: '11px',
+                fontWeight: '800',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                borderBottom: activeTab === 'reviews' ? '2.5px solid var(--primary-color)' : '2.5px solid transparent',
+                color: activeTab === 'reviews' ? '#111111' : '#888888',
+                transition: 'all 0.2s'
+              }}
+            >
+              내가 쓴 리뷰
             </button>
           </div>
         )}
@@ -541,6 +559,91 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
               </div>
             </div>
 
+          </div>
+        )}
+
+        {/* Tab 2.5: User Written Reviews */}
+        {activeTab === 'reviews' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ fontSize: '12px', fontWeight: '800', color: '#64748B', letterSpacing: '0.5px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>내가 작성한 추천글 ({allBlogs.filter(b => b.id.startsWith('b_') || b.author === '나(Me)' || b.author === profile.name).length}개)</span>
+              <Edit2 size={13} color="#64748B" />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {allBlogs.filter(b => b.id.startsWith('b_') || b.author === '나(Me)' || b.author === profile.name).length === 0 ? (
+                <div style={{ padding: '36px 16px', textAlign: 'center', background: '#FFFFFF', borderRadius: '20px', border: '1px solid #EAEAEA', fontSize: '12px', color: '#999999', lineHeight: '1.6' }}>
+                  ✍️ 아직 등록한 추천 리뷰가 없습니다.<br />
+                  구장별 정보(응원형/먹방형) 탭 하단의 <strong>'+' 버튼</strong>을 눌러 첫 코스 리뷰를 작성해 보세요!
+                </div>
+              ) : (
+                allBlogs
+                  .filter(b => b.id.startsWith('b_') || b.author === '나(Me)' || b.author === profile.name)
+                  .map(blog => (
+                    <div
+                      key={blog.id}
+                      onClick={() => onNavigate(blog.mode === 'cheering' ? 9 : 11, { blogId: blog.id })}
+                      style={{
+                        background: '#FFFFFF',
+                        padding: '14px',
+                        borderRadius: '16px',
+                        border: '1px solid #EAEAEA',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.01)',
+                        transition: 'transform 0.15s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.008)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                        <span style={{ 
+                          fontSize: '13px', 
+                          fontWeight: '850', 
+                          color: '#111111', 
+                          lineHeight: '1.4',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          flex: 1,
+                          textAlign: 'left'
+                        }}>
+                          {blog.title}
+                        </span>
+                        
+                        <span style={{
+                          fontSize: '8px',
+                          fontWeight: '900',
+                          color: blog.mode === 'food' ? '#BE123C' : '#1D4ED8',
+                          background: blog.mode === 'food' ? '#FFE4E6' : '#DBEAFE',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          flexShrink: 0
+                        }}>
+                          {blog.mode === 'food' ? '먹방 코스' : '응원 코스'}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #F8FAFC', paddingTop: '8px', marginTop: '2px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {blog.stadium && (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', fontSize: '9px', fontWeight: '800', color: 'var(--primary-color)' }}>
+                              <MapPin size={10} color="var(--primary-color)" /> {blog.stadium}
+                            </span>
+                          )}
+                          <span style={{ fontSize: '9px', color: '#999999', fontWeight: '700' }}>{blog.date}</span>
+                        </div>
+                        <span style={{ fontSize: '9px', color: '#888888', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '1px' }}>
+                          자세히 보기 <ChevronRight size={10} />
+                        </span>
+                      </div>
+                    </div>
+                  ))
+              )}
+            </div>
           </div>
         )}
 
