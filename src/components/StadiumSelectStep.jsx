@@ -13,11 +13,40 @@ const STADIUMS = [
   { id: 'ncpark', name: '엔씨 파크', location: '창원 - NC', city: '창원', team: 'NC', keywords: 'nc dinos nc 엔씨 다이노스 창원 ncpark 엔팍 dinos', homeImage: '/images/ncpark(1).jpg', awayImage: '/images/ncpark.jpeg' },
 ];
 
+const TEAM_MAPPING = {
+  lotte: '롯데',
+  lg: 'LG',
+  doosan: '두산',
+  kia: '기아',
+  samsung: '삼성',
+  ssg: 'SSG',
+  nc: 'NC',
+  kiwoom: '키움',
+  hanwha: '한화',
+  kt: 'KT'
+};
+
 export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
   const activeTeam = myTeam || 'lotte';
-  const [selectedStadium, setSelectedStadium] = useState(STADIUMS[1]); // Default Jamsil active in 5.png
-  const [isAway, setIsAway] = useState(true); // Away is active in 5.png
+  const [selectedStadium, setSelectedStadium] = useState(STADIUMS[1]); // Default Jamsil
+  const [isAway, setIsAway] = useState(() => {
+    const koreanTeam = TEAM_MAPPING[activeTeam];
+    if (koreanTeam && STADIUMS[1].team.includes(koreanTeam)) {
+      return false; // Home
+    }
+    return true; // Away
+  });
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleStadiumSelect = (stadium) => {
+    setSelectedStadium(stadium);
+    const koreanTeam = TEAM_MAPPING[activeTeam];
+    if (koreanTeam && stadium.team.includes(koreanTeam)) {
+      setIsAway(false); // Home
+    } else {
+      setIsAway(true); // Away
+    }
+  };
 
   const handleNext = () => {
     if (selectedStadium) {
@@ -137,7 +166,7 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
               <div 
                 key={stadium.id} 
                 className={`stadium-card ${isSelected ? 'selected' : ''}`}
-                onClick={() => setSelectedStadium(stadium)}
+                onClick={() => handleStadiumSelect(stadium)}
                 style={{
                   border: isSelected ? '2px solid var(--primary-color)' : '1px solid #E2E8F0',
                   borderRadius: '16px',
