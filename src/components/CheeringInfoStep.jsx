@@ -40,7 +40,7 @@ const SHOP_URLS = {
   hanwha: 'https://www.hanwhaeagles.co.kr/SH/PCSH01.do'
 };
 
-export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }) {
+export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate, isLoggedIn }) {
   const homeTeams = stadium ? STADIUM_TO_TEAM[stadium.id] : ['lg', 'doosan'];
 
   const [blogsList, setBlogsList] = useState(() => {
@@ -211,7 +211,14 @@ export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate }
         {/* Cheering Course Schedule */}
         <div className="section-header space-between">
           <h3>응원 코스 추천 일정</h3>
-          <button className="create-btn" onClick={() => setShowWriteModal(true)} style={{ cursor: 'pointer' }}><Plus size={14} /> 작성하기</button>
+          <button className="create-btn" onClick={() => {
+            if (!isLoggedIn) {
+              alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
+              onNavigate(1);
+              return;
+            }
+            setShowWriteModal(true);
+          }} style={{ cursor: 'pointer' }}><Plus size={14} /> 작성하기</button>
         </div>
 
         {blogsList.map((blog) => (

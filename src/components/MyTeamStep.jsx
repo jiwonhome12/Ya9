@@ -109,75 +109,96 @@ export default function MyTeamStep({ onNext }) {
           borderBottom: '1px solid #EAEAEA'
         }}>
           {/* Stadium Background Image */}
-          <img 
-            src={TEAM_STADIUM_IMAGES[selectedTeam] || '/images/sajik.jpeg'} 
-            alt="Stadium Background" 
-            style={{ 
-              position: 'absolute', 
-              inset: 0, 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover', 
-              opacity: 0.45, 
-              filter: 'blur(0.3px)',
-              transition: 'all 0.5s ease-in-out'
-            }}
-          />
+          {selectedTeam && (
+            <img 
+              src={TEAM_STADIUM_IMAGES[selectedTeam]} 
+              alt="Stadium Background" 
+              style={{ 
+                position: 'absolute', 
+                inset: 0, 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover', 
+                opacity: 0.45, 
+                filter: 'blur(0.3px)',
+                transition: 'all 0.5s ease-in-out'
+              }}
+            />
+          )}
           
           {/* Dynamic Gradient Overlay based on Team Color */}
           <div style={{ 
             position: 'absolute', 
             inset: 0, 
-            background: `linear-gradient(to right, #090D1A 45%, ${(TEAM_THEME_COLORS[selectedTeam] || '#6C43EB')}A8 100%)`,
+            background: selectedTeam 
+              ? `linear-gradient(to right, #090D1A 45%, ${(TEAM_THEME_COLORS[selectedTeam] || '#6C43EB')}A8 100%)`
+              : 'linear-gradient(to right, #090D1A 0%, #1E293B 100%)',
             transition: 'all 0.5s ease-in-out'
           }}></div>
           
-          {/* Left: Dynamic Slogan */}
+          {/* Left: Dynamic Slogan or Choose Team placeholder */}
           <div style={{ zIndex: 10, display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            <h3 style={{ 
-              fontSize: '24px', 
-              fontWeight: '900', 
-              color: '#FFFFFF', 
-              letterSpacing: '-0.5px',
-              textShadow: '0 2px 4px rgba(0,0,0,0.6)',
-              margin: 0
-            }}>
-              {TEAM_SLOGANS[selectedTeam]?.title || '투혼투지'}
-            </h3>
-            <h4 style={{ 
-              fontSize: '15px', 
-              fontWeight: '700', 
-              color: '#E2E8F0', 
-              letterSpacing: '0.5px',
-              textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-              margin: 0
-            }}>
-              {TEAM_SLOGANS[selectedTeam]?.subtitle || '승리를 위한 인내'}
-            </h4>
+            {selectedTeam ? (
+              <>
+                <h3 style={{ 
+                  fontSize: '24px', 
+                  fontWeight: '900', 
+                  color: '#FFFFFF', 
+                  letterSpacing: '-0.5px',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.6)',
+                  margin: 0
+                }}>
+                  {TEAM_SLOGANS[selectedTeam]?.title}
+                </h3>
+                <h4 style={{ 
+                  fontSize: '15px', 
+                  fontWeight: '700', 
+                  color: '#E2E8F0', 
+                  letterSpacing: '0.5px',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                  margin: 0
+                }}>
+                  {TEAM_SLOGANS[selectedTeam]?.subtitle}
+                </h4>
+              </>
+            ) : (
+              <h3 style={{ 
+                fontSize: '21px', 
+                fontWeight: '900', 
+                color: '#FFFFFF', 
+                letterSpacing: '-0.5px',
+                textShadow: '0 2px 4px rgba(0,0,0,0.6)',
+                margin: 0
+              }}>
+                팀을 선택해주세요 ⚾
+              </h3>
+            )}
           </div>
 
-          {/* Right: Dynamic Team Logo overlay - enlarged to 115px */}
-          <div style={{ 
-            zIndex: 10, 
-            height: '115px', 
-            width: '115px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            filter: `drop-shadow(0 6px 16px ${TEAM_THEME_COLORS[selectedTeam] || 'rgba(255,255,255,0.3)'})`,
-            transition: 'all 0.3s ease-in-out',
-            transform: 'scale(1.05)'
-          }}>
-            <img 
-              src={TEAM_BANNER_IMAGES[selectedTeam] || '/images/lottegiants.png'} 
-              alt="Team Emblem" 
-              style={{ 
-                maxHeight: '100%', 
-                maxWidth: '100%', 
-                objectFit: 'contain'
-              }} 
-            />
-          </div>
+          {/* Right: Dynamic Team Logo overlay */}
+          {selectedTeam && (
+            <div style={{ 
+              zIndex: 10, 
+              height: '115px', 
+              width: '115px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              filter: `drop-shadow(0 6px 16px ${TEAM_THEME_COLORS[selectedTeam] || 'rgba(255,255,255,0.3)'})`,
+              transition: 'all 0.3s ease-in-out',
+              transform: 'scale(1.05)'
+            }}>
+              <img 
+                src={TEAM_BANNER_IMAGES[selectedTeam]} 
+                alt="Team Emblem" 
+                style={{ 
+                  maxHeight: '100%', 
+                  maxWidth: '100%', 
+                  objectFit: 'contain'
+                }} 
+              />
+            </div>
+          )}
         </div>
 
         {/* Search input field */}

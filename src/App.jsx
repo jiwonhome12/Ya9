@@ -66,11 +66,11 @@ const INITIAL_FEED = [
 ];
 
 function App() {
-  // Development mode: start at home step directly
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3); // Start directly at MyTeamStep to let user choose My Team first
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(() => {
     const profile = mockDbService.getUserProfile();
-    return profile ? profile.team : 'lotte';
+    return profile && profile.team ? profile.team : null;
   });
   const [selectedStadium, setSelectedStadium] = useState(null);
   const [selectedType, setSelectedType] = useState(null); // 'cheering' or 'food'
@@ -132,6 +132,7 @@ function App() {
   const handleTeamFinish = (teamId) => {
     setSelectedTeam(teamId);
     mockDbService.saveUserProfile({ team: teamId });
+    setIsLoggedIn(true); // User completed onboarding & log in
     setStep(16); // Navigate directly to HomeStep Dashboard (step 16)
   };
 
@@ -167,6 +168,11 @@ function App() {
   };
 
   const navigateTo = (newStep, params) => {
+    if (newStep === 17 && !isLoggedIn) {
+      alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
+      setStep(1); // Redirect to Login
+      return;
+    }
     if (newStep === 10 && params?.mode) {
       setFoodDetailMode(params.mode);
     }
@@ -188,12 +194,12 @@ function App() {
       {step === 4 && <StadiumSelectStep onNext={handleStadiumSelect} myTeam={selectedTeam} onNavigate={navigateTo} />}
       {step === 5 && <TypeSelectStep onNext={handleTypeSelect} onBack={goBack} stadium={selectedStadium} myTeam={selectedTeam} onNavigate={navigateTo} />}
       
-      {step === 6 && <CheeringInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} />}
-      {step === 7 && <FoodInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} />}
+      {step === 6 && <CheeringInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} isLoggedIn={isLoggedIn} />}
+      {step === 7 && <FoodInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} isLoggedIn={isLoggedIn} />}
  
       {step === 8 && <CheeringSeatInfoStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} />}
       {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} />}
-      {step === 10 && <FoodDetailStep stadium={selectedStadium} mode={foodDetailMode} onBack={goBack} onNavigate={navigateTo} savedFoods={savedFoods} onToggleFood={toggleSaveFood} />}
+      {step === 10 && <FoodDetailStep stadium={selectedStadium} mode={foodDetailMode} onBack={goBack} onNavigate={navigateTo} savedFoods={savedFoods} onToggleFood={toggleSaveFood} isLoggedIn={isLoggedIn} />}
       {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} />}
 
       {step === 12 && <MessageListStep onBack={goBack} onNavigate={navigateTo} />}

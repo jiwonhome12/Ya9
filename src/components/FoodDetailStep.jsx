@@ -3,7 +3,7 @@ import { ArrowLeft, Home, MapPin, Plus, Heart, User, Edit2, Trash2, X, Star } fr
 import KakaoMap from './KakaoMap';
 import { mockDbService } from '../services/mockDb';
 
-export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [], onToggleFood, onNavigate }) {
+export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [], onToggleFood, onNavigate, isLoggedIn }) {
   const isInside = mode === 'inside';
   const currentStadiumId = stadium?.id || 'jamsil';
   const currentStadiumName = stadium?.name || '잠실 야구장';
@@ -49,6 +49,11 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
   };
 
   const handleOpenCreate = () => {
+    if (!isLoggedIn) {
+      alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
+      onNavigate(1);
+      return;
+    }
     setIsEditMode(false);
     setTargetFoodId(null);
     setFoodName('');
@@ -62,6 +67,11 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
 
   const handleOpenEdit = (food, e) => {
     e.stopPropagation(); // Avoid triggering card toggle
+    if (!isLoggedIn) {
+      alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
+      onNavigate(1);
+      return;
+    }
     setIsEditMode(true);
     setTargetFoodId(food.id);
     setFoodName(food.name);
@@ -75,6 +85,11 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
 
   const handleDeleteFood = (id, e) => {
     e.stopPropagation(); // Avoid triggering card toggle
+    if (!isLoggedIn) {
+      alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
+      onNavigate(1);
+      return;
+    }
     if (window.confirm('정말 이 맛집 추천을 삭제하시겠습니까? 😢')) {
       mockDbService.deleteFoodEntry(id);
       loadFoods();
@@ -89,16 +104,11 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
       return;
     }
 
-    // Filter out incomplete menu rows
-    const cleanedMenus = menusInput
-      .filter(m => m.name.trim() !== '')
-      .map(m => ({ name: m.name, price: parseInt(m.price) || 0 }));
-
     if (isEditMode) {
-      mockDbService.updateFoodEntry(targetFoodId, foodName, foodPrice, foodDesc, foodRating, foodImage, cleanedMenus);
+      mockDbService.updateFoodEntry(targetFoodId, foodName, foodPrice, foodDesc, foodRating, foodImage, []);
       alert('맛집 정보가 수정되었습니다! ✏️');
     } else {
-      mockDbService.addFoodEntry(currentStadiumId, mode, foodName, foodPrice, foodDesc, foodRating, foodImage, cleanedMenus);
+      mockDbService.addFoodEntry(currentStadiumId, mode, foodName, foodPrice, foodDesc, foodRating, foodImage, []);
       alert('새로운 맛집이 등록되었습니다! 🎉');
     }
 
@@ -154,13 +164,6 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
                 {currentStadiumName} {isInside ? '내 명물 리스트' : '근처 픽업/포장 리스트'}
               </h3>
             </div>
-            <button 
-              className="create-btn large" 
-              onClick={handleOpenCreate}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', background: 'var(--primary-color)', color: '#FFF', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: '700', fontSize: '12px' }}
-            >
-              <Plus size={14} /> 작성하기
-            </button>
           </div>
           
           <ul className="store-detail-desc" style={{ paddingLeft: '20px', margin: '0 0 16px 0', fontSize: '12px', color: '#666', lineHeight: '1.6' }}>
@@ -180,7 +183,6 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
               <div style={{ textAlign: 'center', padding: '40px 20px', color: '#888', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '24px' }}>🥄</span>
                 <p style={{ fontSize: '13px', fontWeight: '600', margin: 0 }}>등록된 식당 정보가 아직 없습니다.</p>
-                <p style={{ fontSize: '11px', color: '#aaa', margin: 0 }}>우측 상단의 "작성하기"를 통해 구장의 첫 식당을 등록해보세요!</p>
               </div>
             ) : (
               foodsList.map((food, idx) => {
@@ -231,20 +233,6 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
                                   color="#E1002A" 
                                   fill={savedFoods.includes(food.id) ? '#E1002A' : 'none'} 
                                 />
-                              </button>
-                              {/* Edit Button */}
-                              <button 
-                                onClick={(e) => handleOpenEdit(food, e)}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px', color: '#666' }}
-                              >
-                                <Edit2 size={14} />
-                              </button>
-                              {/* Delete Button */}
-                              <button 
-                                onClick={(e) => handleDeleteFood(food.id, e)}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px', color: '#E1002A' }}
-                              >
-                                <Trash2 size={14} />
                               </button>
                             </div>
                           </div>
@@ -403,63 +391,11 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
                 />
               </div>
 
-              {/* Dynamic Menu Board Builder */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '850', color: '#333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>식당 메뉴 리스트 구성 📋</span>
-                  <button 
-                    type="button"
-                    onClick={() => setMenusInput([...menusInput, { name: '', price: '' }])}
-                    style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontSize: '11px', fontWeight: '850', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '2px' }}
-                  >
-                    + 메뉴 추가
-                  </button>
-                </label>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto', paddingRight: '4px' }}>
-                  {menusInput.map((m, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <input 
-                        type="text" 
-                        placeholder="메뉴명" 
-                        value={m.name} 
-                        onChange={(e) => {
-                          const next = [...menusInput];
-                          next[idx].name = e.target.value;
-                          setMenusInput(next);
-                        }}
-                        style={{ flex: 2, padding: '8px 10px', fontSize: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', outline: 'none' }}
-                      />
-                      <input 
-                        type="number" 
-                        placeholder="가격(원)" 
-                        value={m.price} 
-                        onChange={(e) => {
-                          const next = [...menusInput];
-                          next[idx].price = e.target.value;
-                          setMenusInput(next);
-                        }}
-                        style={{ flex: 1.2, padding: '8px 10px', fontSize: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', outline: 'none' }}
-                      />
-                      {menusInput.length > 1 && (
-                        <button 
-                          type="button" 
-                          onClick={() => setMenusInput(menusInput.filter((_, i) => i !== idx))}
-                          style={{ background: 'none', border: 'none', color: '#E1002A', cursor: 'pointer', padding: '4px' }}
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               <button 
                 type="submit" 
                 style={{ width: '100%', padding: '12px', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', transition: 'opacity 0.2s', marginTop: '6px' }}
               >
-                {isEditMode ? '식당/메뉴판 수정 완료' : '식당/메뉴판 등록하기'}
+                {isEditMode ? '식당 정보 수정 완료' : '식당 정보 등록하기'}
               </button>
             </form>
           </div>

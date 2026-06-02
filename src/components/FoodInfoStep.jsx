@@ -27,7 +27,7 @@ const STADIUM_TO_TEAM = {
   ncpark: ['nc']
 };
 
-export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
+export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate, isLoggedIn }) {
   const homeTeams = stadium ? STADIUM_TO_TEAM[stadium.id] : ['lg', 'doosan'];
 
   const [blogsList, setBlogsList] = useState(() => {
@@ -264,7 +264,14 @@ export default function FoodInfoStep({ stadium, myTeam, onBack, onNavigate }) {
         {/* Food Course Schedule */}
         <div className="section-header space-between" style={{ marginTop: '30px' }}>
           <h3>맛집 코스 추천 일정</h3>
-          <button className="create-btn" onClick={() => setShowWriteModal(true)} style={{ cursor: 'pointer' }}><Plus size={14} /> 작성하기</button>
+          <button className="create-btn" onClick={() => {
+            if (!isLoggedIn) {
+              alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
+              onNavigate(1);
+              return;
+            }
+            setShowWriteModal(true);
+          }} style={{ cursor: 'pointer' }}><Plus size={14} /> 작성하기</button>
         </div>
         
         {blogsList.map((blog) => (
