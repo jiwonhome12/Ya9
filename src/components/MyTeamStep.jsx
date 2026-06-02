@@ -67,7 +67,7 @@ const TEAM_THEME_COLORS = {
 };
 
 export default function MyTeamStep({ onNext }) {
-  const [selectedTeam, setSelectedTeam] = useState('lotte'); // Default to LOTTE active in 3.png
+  const [selectedTeam, setSelectedTeam] = useState(null); // No default team selected
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleTeamClick = (teamId) => {
@@ -278,7 +278,13 @@ export default function MyTeamStep({ onNext }) {
       {/* MY TEAM save settings button */}
       <div style={{ padding: '0 20px', marginTop: '24px' }}>
         <button 
-          onClick={() => onNext(selectedTeam)}
+          onClick={() => {
+            if (selectedTeam) {
+              onNext(selectedTeam);
+            } else {
+              alert('마이팀을 선택해 주세요.');
+            }
+          }}
           style={{
             width: '100%',
             padding: '16px',

@@ -28,14 +28,8 @@ const TEAM_MAPPING = {
 
 export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
   const activeTeam = myTeam || 'lotte';
-  const [selectedStadium, setSelectedStadium] = useState(STADIUMS[1]); // Default Jamsil
-  const [isAway, setIsAway] = useState(() => {
-    const koreanTeam = TEAM_MAPPING[activeTeam];
-    if (koreanTeam && STADIUMS[1].team.includes(koreanTeam)) {
-      return false; // Home
-    }
-    return true; // Away
-  });
+  const [selectedStadium, setSelectedStadium] = useState(null); // No stadium selected by default
+  const [isAway, setIsAway] = useState(true); // Default to Away (원정)
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleStadiumSelect = (stadium) => {
