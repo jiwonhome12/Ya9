@@ -213,8 +213,9 @@ export default function CheeringInfoStep({ stadium, myTeam, onBack, onNavigate, 
           <h3>응원 코스 추천 일정</h3>
           <button className="create-btn" onClick={() => {
             if (!isLoggedIn) {
-              alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
-              onNavigate(1);
+              if (window.confirm('로그인이 필요한 서비스입니다. 로그인 화면으로 이동하시겠습니까? 🔒')) {
+                onNavigate(1);
+              }
               return;
             }
             setShowWriteModal(true);

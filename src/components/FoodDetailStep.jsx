@@ -225,7 +225,16 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
                             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                               {/* Wishlist toggle */}
                               <button 
-                                onClick={(e) => { e.stopPropagation(); onToggleFood(food.id); }}
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  if (!isLoggedIn) {
+                                    if (window.confirm('로그인이 필요한 서비스입니다. 로그인 화면으로 이동하시겠습니까? 🔒')) {
+                                      onNavigate(1);
+                                    }
+                                    return;
+                                  }
+                                  onToggleFood(food.id); 
+                                }}
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '2px' }}
                               >
                                 <Heart 

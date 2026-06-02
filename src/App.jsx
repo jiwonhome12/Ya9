@@ -129,10 +129,14 @@ function App() {
 
   const nextStep = () => setStep(prev => prev + 1);
 
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    nextStep();
+  };
+
   const handleTeamFinish = (teamId) => {
     setSelectedTeam(teamId);
     mockDbService.saveUserProfile({ team: teamId });
-    setIsLoggedIn(true); // User completed onboarding & log in
     setStep(16); // Navigate directly to HomeStep Dashboard (step 16)
   };
 
@@ -169,8 +173,9 @@ function App() {
 
   const navigateTo = (newStep, params) => {
     if (newStep === 17 && !isLoggedIn) {
-      alert('로그인이 필요한 서비스입니다. 로그인 화면으로 이동합니다. 🔒');
-      setStep(1); // Redirect to Login
+      if (window.confirm('로그인이 필요한 서비스입니다. 로그인 화면으로 이동하시겠습니까? 🔒')) {
+        setStep(1); // Redirect to Login
+      }
       return;
     }
     if (newStep === 10 && params?.mode) {
@@ -185,9 +190,16 @@ function App() {
     setStep(newStep);
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setSelectedTeam(null);
+    mockDbService.saveUserProfile({ team: null, name: '', bio: '', avatar: '' });
+    setStep(3);
+  };
+
   return (
     <>
-      {step === 1 && <LoginStep onNext={nextStep} />}
+      {step === 1 && <LoginStep onNext={handleLoginSuccess} />}
       {step === 2 && <ProfileStep onNext={nextStep} />}
       {step === 3 && <MyTeamStep onNext={handleTeamFinish} />}
       
@@ -198,9 +210,9 @@ function App() {
       {step === 7 && <FoodInfoStep stadium={selectedStadium} myTeam={selectedTeam} onBack={goBack} onNavigate={navigateTo} isLoggedIn={isLoggedIn} />}
  
       {step === 8 && <CheeringSeatInfoStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} />}
-      {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} />}
+      {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} isLoggedIn={isLoggedIn} />}
       {step === 10 && <FoodDetailStep stadium={selectedStadium} mode={foodDetailMode} onBack={goBack} onNavigate={navigateTo} savedFoods={savedFoods} onToggleFood={toggleSaveFood} isLoggedIn={isLoggedIn} />}
-      {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} />}
+      {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} isLoggedIn={isLoggedIn} />}
 
       {step === 12 && <MessageListStep onBack={goBack} onNavigate={navigateTo} />}
       {step === 13 && <ChatRoomStep onBack={goBack} onNavigate={navigateTo} />}
@@ -218,6 +230,7 @@ function App() {
           onToggleFood={toggleSaveFood} 
           onToggleBlog={toggleSaveBlog} 
           initialTab={myPageTab}
+          onLogout={handleLogout}
         />
       )}
     </>

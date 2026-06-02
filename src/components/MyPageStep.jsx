@@ -15,7 +15,7 @@ const KBO_TEAMS = [
   { code: 'hanwha', name: '한화 이글스' }
 ];
 
-export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs, onToggleFood, onToggleBlog, initialTab }) {
+export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs, onToggleFood, onToggleBlog, initialTab, onLogout }) {
   const activeTeam = myTeam || 'lotte';
   const [profile, setProfile] = useState(() => mockDbService.getUserProfile());
 
@@ -118,8 +118,12 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
   };
 
   const handleLogout = () => {
-    if (window.confirm('정말 로그아웃 하시겠습니까?')) {
-      onNavigate(1); // Return to LoginStep (step 1)
+    if (window.confirm('정말 로그아웃 하시겠습니까? 🔒')) {
+      if (onLogout) {
+        onLogout();
+      } else {
+        onNavigate(1);
+      }
     }
   };
 
@@ -135,7 +139,13 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
             <ChevronLeft size={24} color="#555555" />
           </button>
         ) : (
-          <div style={{ width: '24px' }}></div>
+          <button 
+            onClick={handleLogout} 
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#E1002A' }}
+            title="로그아웃"
+          >
+            <LogOut size={20} />
+          </button>
         )}
         <h1 className="logo-text" style={{ fontSize: '18px', fontWeight: '800', textAlign: 'center', flex: 1, margin: 0 }}>
           {activeTab === 'extra' ? '설정 및 기타' : '마이페이지'}

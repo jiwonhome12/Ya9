@@ -9,7 +9,7 @@ const FRIENDS_LIST = [
   { id: 4, name: '오정훈', handle: '@oh~' }
 ];
 
-export default function CheeringCourseStep({ onBack, onNavigate, savedBlogs = [], onToggleBlog, blogId }) {
+export default function CheeringCourseStep({ onBack, onNavigate, savedBlogs = [], onToggleBlog, blogId, isLoggedIn }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDesc, setEditDesc] = useState('');
@@ -26,6 +26,12 @@ export default function CheeringCourseStep({ onBack, onNavigate, savedBlogs = []
   };
 
   const handleStartEdit = () => {
+    if (!isLoggedIn) {
+      if (window.confirm('로그인이 필요한 서비스입니다. 로그인 화면으로 이동하시겠습니까? 🔒')) {
+        onNavigate(1);
+      }
+      return;
+    }
     setEditTitle(blog.title);
     setEditDesc(blog.desc);
     setEditStadium(blog.stadium || '');
@@ -44,6 +50,12 @@ export default function CheeringCourseStep({ onBack, onNavigate, savedBlogs = []
   };
 
   const handleDelete = () => {
+    if (!isLoggedIn) {
+      if (window.confirm('로그인이 필요한 서비스입니다. 로그인 화면으로 이동하시겠습니까? 🔒')) {
+        onNavigate(1);
+      }
+      return;
+    }
     if (window.confirm('정말로 이 추천글을 삭제하시겠습니까? 🗑️')) {
       mockDbService.deleteBlogEntry(blog.id);
       alert('추천글이 삭제되었습니다.');
@@ -69,7 +81,15 @@ export default function CheeringCourseStep({ onBack, onNavigate, savedBlogs = []
         <h2 className="top-bar-title" style={{ flex: 1, textAlign: 'center', margin: 0 }}>응원 코스 추천 일정</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'absolute', right: '16px' }}>
           <button
-            onClick={() => onToggleBlog(blog.id)}
+            onClick={() => {
+              if (!isLoggedIn) {
+                if (window.confirm('로그인이 필요한 서비스입니다. 로그인 화면으로 이동하시겠습니까? 🔒')) {
+                  onNavigate(1);
+                }
+                return;
+              }
+              onToggleBlog(blog.id);
+            }}
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
           >
             <Bookmark 
