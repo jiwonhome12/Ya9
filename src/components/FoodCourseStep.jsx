@@ -10,7 +10,7 @@ const FRIENDS_LIST = [
   { id: 4, name: '오정훈', handle: '@oh~' }
 ];
 
-export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], onToggleBlog, blogId, isLoggedIn }) {
+export default function FoodCourseStep({ stadium, onBack, onNavigate, savedBlogs = [], onToggleBlog, blogId, isLoggedIn }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDesc, setEditDesc] = useState('');
@@ -232,7 +232,7 @@ export default function FoodCourseStep({ onBack, onNavigate, savedBlogs = [], on
 
             {/* Map Embed */}
             <div style={{ margin: '30px 0', borderRadius: '8px', overflow: 'hidden', border: '1px solid #eee' }}>
-              <KakaoMap />
+              <KakaoMap latitude={stadium?.lat} longitude={stadium?.lng} />
             </div>
 
             <div className="blog-text-centered" style={{ marginBottom: '30px' }}>

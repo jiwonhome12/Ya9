@@ -212,7 +212,7 @@ function App() {
       {step === 8 && <CheeringSeatInfoStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} />}
       {step === 9 && <CheeringCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} isLoggedIn={isLoggedIn} />}
       {step === 10 && <FoodDetailStep stadium={selectedStadium} mode={foodDetailMode} onBack={goBack} onNavigate={navigateTo} savedFoods={savedFoods} onToggleFood={toggleSaveFood} isLoggedIn={isLoggedIn} />}
-      {step === 11 && <FoodCourseStep onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} isLoggedIn={isLoggedIn} />}
+      {step === 11 && <FoodCourseStep stadium={selectedStadium} onBack={goBack} onNavigate={navigateTo} savedBlogs={savedBlogs} onToggleBlog={toggleSaveBlog} blogId={selectedBlogId} isLoggedIn={isLoggedIn} />}
 
       {step === 12 && <MessageListStep onBack={goBack} onNavigate={navigateTo} />}
       {step === 13 && <ChatRoomStep onBack={goBack} onNavigate={navigateTo} />}

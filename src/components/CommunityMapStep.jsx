@@ -37,7 +37,11 @@ export default function CommunityMapStep({ stadium, onBack, onNavigate, onAddPin
       </div>
 
       <div className="main-content" style={{ padding: 0, flex: 1, position: 'relative', overflow: 'hidden' }}>
-        <KakaoMap style={{ height: '100%' }} />
+        <KakaoMap 
+          latitude={stadium?.lat} 
+          longitude={stadium?.lng} 
+          style={{ height: '100%' }} 
+        />
 
         {/* Floating Buttons Overlay */}
         <div style={{ position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '16px', padding: '0 16px' }}>
