@@ -66,7 +66,7 @@ export default function LoginStep({ onNext }) {
   return (
     <>
       <div className="header">
-        stadium pulse
+        Ya9
       </div>
       <div className="container">
         <h1 className="title">Login</h1>

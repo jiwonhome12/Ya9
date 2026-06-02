@@ -390,7 +390,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
           style={{ cursor: 'pointer', color: '#555555' }} 
           onClick={() => onNavigate(17, { tab: 'extra' })}
         />
-        <div className="logo-text" style={{ fontStyle: 'normal', fontWeight: '800', tracking: 'wide' }}>stadium pulse</div>
+        <div className="logo-text" style={{ fontStyle: 'normal', fontWeight: '800', tracking: 'wide' }}>Ya9</div>
         <div 
           className={`my-team-badge ${activeTeam}`} 
           style={{ cursor: 'pointer' }}

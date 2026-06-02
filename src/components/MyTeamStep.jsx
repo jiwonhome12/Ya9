@@ -91,7 +91,7 @@ export default function MyTeamStep({ onNext }) {
         {/* Top Header Title */}
         <div style={{ textAlign: 'center', padding: '16px 24px 12px', borderBottom: '1px solid #EAEAEA', background: '#FFFFFF' }}>
           <h1 style={{ fontSize: '24px', fontWeight: '800', letterSpacing: '2px', color: '#0F172A', fontFamily: 'Outfit, sans-serif' }}>
-            stadium pulse
+            Ya9
           </h1>
         </div>
 

@@ -17,7 +17,7 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam, onNavi
       {/* Header */}
       <div className="main-header" style={{ display: 'flex', alignItems: 'center' }}>
         <ArrowLeft className="back-icon" onClick={onBack} style={{ cursor: 'pointer' }} />
-        <div className="logo-text">stadium pulse</div>
+        <div className="logo-text">Ya9</div>
         {myTeam ? (
           <div 
             className={`my-team-badge ${myTeam}`} 

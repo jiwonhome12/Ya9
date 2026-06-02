@@ -42,7 +42,7 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
       {/* Top Header */}
       <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF' }}>
         <Menu className="menu-icon" style={{ cursor: 'pointer', color: '#555555' }} onClick={() => onNavigate(17, { tab: 'extra' })} />
-        <div className="logo-text" style={{ fontStyle: 'normal', fontWeight: '800' }}>stadium pulse</div>
+        <div className="logo-text" style={{ fontStyle: 'normal', fontWeight: '800' }}>Ya9</div>
         <div 
           className={`my-team-badge ${activeTeam}`} 
           style={{ cursor: 'pointer' }}
