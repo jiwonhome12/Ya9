@@ -52,7 +52,14 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam, onNavi
         <div className="type-cards-container">
           <div 
             className={`type-card ${selectedType === 'cheering' ? 'selected' : ''}`}
-            onClick={() => setSelectedType('cheering')}
+            onClick={() => {
+              if (selectedType === 'cheering') {
+                onNext('cheering');
+              } else {
+                setSelectedType('cheering');
+              }
+            }}
+            onDoubleClick={() => onNext('cheering')}
             style={{ borderColor: selectedType === 'cheering' ? 'var(--primary-color)' : '' }}
           >
             <div 
@@ -69,7 +76,14 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam, onNavi
 
           <div 
             className={`type-card ${selectedType === 'food' ? 'selected' : ''}`}
-            onClick={() => setSelectedType('food')}
+            onClick={() => {
+              if (selectedType === 'food') {
+                onNext('food');
+              } else {
+                setSelectedType('food');
+              }
+            }}
+            onDoubleClick={() => onNext('food')}
             style={{ borderColor: selectedType === 'food' ? 'var(--primary-color)' : '' }}
           >
             <div 
@@ -84,17 +98,17 @@ export default function TypeSelectStep({ onNext, onBack, stadium, myTeam, onNavi
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Action Buttons */}
-        <div className="action-buttons-row">
-          <button 
-            className="next-btn full-width" 
-            onClick={handleNext}
-            style={{ backgroundColor: 'var(--primary-color)' }}
-          >
-            next step
-          </button>
-        </div>
+      {/* Action Buttons */}
+      <div className="action-buttons-fixed">
+        <button 
+          className="next-btn full-width" 
+          onClick={handleNext}
+          style={{ backgroundColor: 'var(--primary-color)' }}
+        >
+          next step
+        </button>
       </div>
 
       {/* Bottom Navigation */}
