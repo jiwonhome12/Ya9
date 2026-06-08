@@ -61,7 +61,7 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
   });
 
   return (
-    <div className="main-layout" style={{ background: '#FFFFFF', fontFamily: 'Inter, sans-serif', position: 'relative', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div className="main-layout" style={{ background: '#FFFFFF', fontFamily: 'Inter, sans-serif', position: 'relative', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Top Header */}
       <div className="main-header" style={{ borderBottom: '1px solid #EAEAEA', background: '#FFFFFF' }}>
         <Menu className="menu-icon" style={{ cursor: 'pointer', color: '#555555' }} onClick={() => onNavigate(17, { tab: 'extra' })} />

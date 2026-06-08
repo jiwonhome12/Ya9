@@ -275,7 +275,9 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
+  position: relative;
 }
 
 .main-header {
@@ -564,6 +566,23 @@ body {
   font-size: 12px;
   color: var(--text-secondary);
   margin-left: 16px;
+}
+
+/* Responsive adjustments for mobile phone viewports */
+@media (max-width: 480px), (max-height: 860px) {
+  .type-card-img {
+    height: 100px;
+  }
+  .type-card-content {
+    padding: 12px;
+  }
+  .type-cards-container {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .selected-stadium-info {
+    margin-bottom: 12px;
+  }
 }
 
 /* Cheering & Food Info */
