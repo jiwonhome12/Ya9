@@ -377,8 +377,15 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
   }
 
   const handleHighlightClick = () => {
-    const channelUrl = YOUTUBE_CHANNELS[activeTeam] || 'https://www.youtube.com';
-    window.open(channelUrl, '_blank');
+    if (pastMatch) {
+      const activeTeamName = TEAM_INFO[activeTeam]?.name.split(' ')[0] || activeTeam;
+      const oppName = pastMatch.opponentName.split(' ')[0] || pastMatch.opponent;
+      const query = encodeURIComponent(`KBO ${activeTeamName} ${oppName} 하이라이트`);
+      window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
+    } else {
+      const query = encodeURIComponent(`KBO 하이라이트`);
+      window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
+    }
   };
 
   return (
