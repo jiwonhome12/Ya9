@@ -943,7 +943,7 @@ export default function HomeStep({ onNavigate, myTeam, selectedStadium }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#333333' }}>하이라이트 보기</h3>
             <span 
-              onClick={() => window.open('https://m.sports.naver.com/kbaseball/schedule/index', '_blank')}
+              onClick={handleHighlightClick}
               style={{ fontSize: '11px', color: '#888888', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
             >
               더보기 <ChevronRight size={14} />
