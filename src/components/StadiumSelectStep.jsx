@@ -40,6 +40,9 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
     } else {
       setIsAway(true); // Away
     }
+    if (selectedStadium?.id === stadium.id) {
+      onNext(stadium);
+    }
   };
 
   const handleNext = () => {
@@ -161,6 +164,7 @@ export default function StadiumSelectStep({ onNext, myTeam, onNavigate }) {
                 key={stadium.id} 
                 className={`stadium-card ${isSelected ? 'selected' : ''}`}
                 onClick={() => handleStadiumSelect(stadium)}
+                onDoubleClick={() => onNext(stadium)}
                 style={{
                   border: isSelected ? '2px solid var(--primary-color)' : '1px solid #E2E8F0',
                   borderRadius: '16px',

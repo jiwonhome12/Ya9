@@ -72,6 +72,9 @@ export default function MyTeamStep({ onNext }) {
 
   const handleTeamClick = (teamId) => {
     setSelectedTeam(teamId);
+    if (selectedTeam === teamId) {
+      onNext(teamId);
+    }
   };
 
   const filteredTeams = TEAMS.filter(team => {
@@ -252,6 +255,7 @@ export default function MyTeamStep({ onNext }) {
                 <button
                   key={team.id}
                   onClick={() => handleTeamClick(team.id)}
+                  onDoubleClick={() => onNext(team.id)}
                   style={{
                     width: '100%',
                     padding: '18px 12px',
