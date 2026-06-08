@@ -293,6 +293,83 @@ export default function FoodDetailStep({ stadium, mode, onBack, savedFoods = [],
                               </div>
                             ))}
                           </div>
+
+                          {/* Review Section */}
+                          <div style={{ marginTop: '16px', borderTop: '1px dashed #E2E8F0', paddingTop: '12px' }}>
+                            <h5 style={{ margin: '0 0 8px 0', fontSize: '12.5px', fontWeight: '850', color: 'var(--primary-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span>⭐ 식당 리뷰 ({food.reviews?.length || 0})</span>
+                            </h5>
+
+                            {/* Reviews list */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px', maxHeight: '120px', overflowY: 'auto', paddingRight: '4px' }}>
+                              {!food.reviews || food.reviews.length === 0 ? (
+                                <div style={{ fontSize: '10.5px', color: '#999', textAlign: 'center', padding: '12px 0' }}>
+                                  작성된 리뷰가 없습니다. 첫 리뷰를 달아보세요!
+                                </div>
+                              ) : (
+                                food.reviews.map((rev) => (
+                                  <div key={rev.id} style={{ backgroundColor: '#FFFFFF', padding: '6px 10px', borderRadius: '8px', border: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <span style={{ fontSize: '10px', fontWeight: '800', color: '#333' }}>{rev.username}</span>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                        <span style={{ fontSize: '9px', color: '#FFB800' }}>{'★'.repeat(Math.round(rev.rating))}</span>
+                                        <span style={{ fontSize: '9px', color: '#999' }}>{rev.date}</span>
+                                      </div>
+                                    </div>
+                                    <p style={{ margin: 0, fontSize: '10px', color: '#666', lineHeight: '1.4' }}>{rev.text}</p>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+
+                            {/* Review Form */}
+                            <form 
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                const text = e.target.reviewText.value.trim();
+                                const rating = parseFloat(e.target.reviewRating.value);
+                                if (!text) return;
+                                
+                                const profile = mockDbService.getUserProfile();
+                                mockDbService.addFoodReview(food.id, profile.name || '익명', rating, text);
+                                
+                                // Reset form
+                                e.target.reviewText.value = '';
+                                e.target.reviewRating.value = '5';
+                                
+                                loadFoods(); // reload state
+                                alert('리뷰가 등록되었습니다! ⭐');
+                              }}
+                              style={{ display: 'flex', gap: '6px', alignItems: 'center' }}
+                            >
+                              <select 
+                                name="reviewRating"
+                                defaultValue="5"
+                                style={{ padding: '6px', fontSize: '11px', border: '1px solid #E2E8F0', borderRadius: '6px', background: '#FFFFFF', outline: 'none', fontWeight: '700' }}
+                              >
+                                <option value="5">⭐⭐⭐⭐⭐</option>
+                                <option value="4">⭐⭐⭐⭐</option>
+                                <option value="3">⭐⭐⭐</option>
+                                <option value="2">⭐⭐</option>
+                                <option value="1">⭐</option>
+                              </select>
+                              <input 
+                                name="reviewText"
+                                type="text"
+                                placeholder={isLoggedIn ? "한줄 리뷰를 남겨주세요!" : "로그인 후 작성 가능합니다."}
+                                disabled={!isLoggedIn}
+                                style={{ flex: 1, padding: '6px 10px', fontSize: '11px', border: '1px solid #E2E8F0', borderRadius: '6px', outline: 'none' }}
+                                required
+                              />
+                              <button 
+                                type="submit"
+                                disabled={!isLoggedIn}
+                                style={{ padding: '6px 12px', fontSize: '11px', fontWeight: '800', backgroundColor: 'var(--primary-color)', color: '#FFFFFF', border: 'none', borderRadius: '6px', cursor: 'pointer', opacity: isLoggedIn ? 1 : 0.6 }}
+                              >
+                                등록
+                              </button>
+                            </form>
+                          </div>
                         </div>
                       )}
                     </div>

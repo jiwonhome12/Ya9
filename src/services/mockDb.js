@@ -638,6 +638,31 @@ export const mockDbService = {
     saveDb(STORAGE_KEYS.FOODS, db.foods);
     return db.foods;
   },
+  addFoodReview: (foodId, username, rating, text) => {
+    db.foods = getOrSeed(STORAGE_KEYS.FOODS, INITIAL_FOODS);
+    const index = db.foods.findIndex(f => f.id === foodId);
+    if (index !== -1) {
+      const food = db.foods[index];
+      if (!food.reviews) {
+        food.reviews = [];
+      }
+      const newReview = {
+        id: 'rev_' + Date.now(),
+        username: username || '익명',
+        rating: parseFloat(rating) || 5.0,
+        text,
+        date: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\s/g, '').slice(0, -1)
+      };
+      food.reviews.push(newReview);
+      
+      const totalRating = food.reviews.reduce((acc, curr) => acc + curr.rating, 0);
+      food.rating = totalRating / food.reviews.length;
+
+      saveDb(STORAGE_KEYS.FOODS, db.foods);
+      return food;
+    }
+    return null;
+  },
   getBlogs: () => {
     db.blogs = getOrSeed(STORAGE_KEYS.BLOGS, INITIAL_BLOGS);
     return db.blogs;
@@ -684,7 +709,7 @@ export const mockDbService = {
     db.diary = getOrSeed(STORAGE_KEYS.DIARY, INITIAL_DIARY);
     return db.diary.sort((a, b) => new Date(b.date) - new Date(a.date));
   },
-  addDiaryEntry: (date, stadium, myTeam, vsTeam, result, myScore, vsScore) => {
+  addDiaryEntry: (date, stadium, myTeam, vsTeam, result, myScore, vsScore, comment = '') => {
     db.diary = getOrSeed(STORAGE_KEYS.DIARY, INITIAL_DIARY);
     const newEntry = {
       id: 'd_' + Date.now(),
@@ -694,7 +719,8 @@ export const mockDbService = {
       vsTeam,
       result,
       myScore: parseInt(myScore) || 0,
-      vsScore: parseInt(vsScore) || 0
+      vsScore: parseInt(vsScore) || 0,
+      comment: comment || ''
     };
     db.diary.push(newEntry);
     saveDb(STORAGE_KEYS.DIARY, db.diary);

@@ -39,6 +39,7 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
   const [diaryResult, setDiaryResult] = useState('W'); // 'W', 'L', 'D'
   const [diaryMyScore, setDiaryMyScore] = useState('');
   const [diaryVsScore, setDiaryVsScore] = useState('');
+  const [diaryComment, setDiaryComment] = useState('');
 
   // Profile Edit Form State
   const [profileName, setProfileName] = useState(profile.name || 'ji_won.-.f');
@@ -83,22 +84,24 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
   };
 
   const handleAddDiary = (e) => {
-    e.preventDefault();
-    mockDbService.addDiaryEntry(
-      diaryDate,
-      diaryStadium,
-      activeTeam,
-      diaryVsTeam,
-      diaryResult,
-      diaryMyScore,
-      diaryVsScore
-    );
-    loadDiaryData();
-    setShowAddForm(false);
-    // Reset form
-    setDiaryMyScore('');
-    setDiaryVsScore('');
-  };
+     e.preventDefault();
+     mockDbService.addDiaryEntry(
+       diaryDate,
+       diaryStadium,
+       activeTeam,
+       diaryVsTeam,
+       diaryResult,
+       diaryMyScore,
+       diaryVsScore,
+       diaryComment
+     );
+     loadDiaryData();
+     setShowAddForm(false);
+     // Reset form
+     setDiaryMyScore('');
+     setDiaryVsScore('');
+     setDiaryComment('');
+   };
 
   const handleDeleteDiary = (id) => {
     mockDbService.deleteDiaryEntry(id);
@@ -408,6 +411,18 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
                     </div>
                   </div>
 
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', borderTop: '1px solid #F1F5F9', paddingTop: '8px' }}>
+                    <label style={{ fontSize: '10px', fontWeight: '800', color: '#666666' }}>한줄 코멘트 / 메모</label>
+                    <input 
+                      type="text" 
+                      value={diaryComment}
+                      placeholder="예: 오늘 홈런 3방 터짐! 꿀잼 직관"
+                      onChange={(e) => setDiaryComment(e.target.value)}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', outline: 'none' }}
+                      maxLength={100}
+                    />
+                  </div>
+
                   <button 
                     type="submit"
                     style={{
@@ -465,6 +480,11 @@ export default function MyPageStep({ onNavigate, myTeam, savedFoods, savedBlogs,
                           <span>•</span>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '2px' }}><MapPin size={10} /> {entry.stadium}</span>
                         </div>
+                        {entry.comment && (
+                          <div style={{ fontSize: '10px', color: '#555555', fontStyle: 'italic', background: '#F8FAFC', padding: '4px 8px', borderRadius: '6px', borderLeft: '2px solid var(--primary-color)', marginTop: '4px', maxWidth: '220px', wordBreak: 'break-all' }}>
+                            "{entry.comment}"
+                          </div>
+                        )}
                       </div>
                     </div>
 
