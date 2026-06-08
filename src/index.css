@@ -579,15 +579,29 @@ body {
 
 /* Responsive adjustments for mobile phone viewports */
 @media (max-width: 480px), (max-height: 860px) {
-  .type-card-img {
-    height: 100px;
-  }
-  .type-card-content {
-    padding: 12px;
-  }
   .type-cards-container {
+    flex-direction: row;
     gap: 12px;
     margin-bottom: 16px;
+  }
+  .type-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .type-card-img {
+    height: 80px;
+  }
+  .type-card-content {
+    padding: 10px;
+  }
+  .type-card-content h3 {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .type-card-content ul {
+    font-size: 10px;
+    margin-left: 10px;
   }
   .selected-stadium-info {
     margin-bottom: 12px;
